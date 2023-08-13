@@ -1,26 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import MultiSelect from "./components/select";
+import IIdName from "./types/IIdName";
 
-function App() {
+const fakeData: IIdName[] = [
+  { id: 1, name: "Option 1" },
+  { id: 4, name: "Option 2" },
+  { id: 5, name: "Testing" },
+  { id: 2, name: "Testing 3" },
+  { id: 3, name: "Testing 4" },
+  { id: 6, name: "Pre selected item" },
+];
+
+const App = () => {
+  const [items, setItems] = useState<IIdName[]>([fakeData[5]]);
+
+  const fakeApiCall = (stringToFilterOn: string): Promise<IIdName[]> => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const filteredData = fakeData.filter((x) =>
+          x.name.toLowerCase().includes(stringToFilterOn.toLocaleLowerCase())
+        );
+        resolve(filteredData);
+      }, 500);
+    });
+  };
+
+  const addItemToList = (newItem: IIdName) => {
+    setItems((prev) => [...prev, newItem]);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <ul>
+        {items.map((x) => (
+          <li key={x.id}>{x.name}</li>
+        ))}
+      </ul>
+      <MultiSelect
+        onItemSelect={addItemToList}
+        selectedItems={items}
+        lookupFunction={fakeApiCall}
+        label="Search for things"
+        debounceInMilliseconds={200}
+      />
     </div>
   );
-}
+};
 
 export default App;
