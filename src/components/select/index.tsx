@@ -92,9 +92,31 @@ const MultiSelect = <T extends IIdName>({
     debounceInMilliseconds
   );
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleKeyDownOnInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       lookupResults(inputText, resetErrorState);
+    } else if (e.key === "ArrowDown") {
+      // put focus on the first item in the list if arrowing down from input
+      const firstChild = dropdownRef.current?.firstChild as HTMLElement;
+      if (firstChild) {
+        firstChild.focus();
+      }
+    }
+  };
+
+  // allow for up/down arrow navigation on list items
+  const handleKeyDownOnDropdownItem = (
+    e: React.KeyboardEvent<HTMLButtonElement>
+  ) => {
+    if (e.key === "ArrowDown") {
+      e.currentTarget.nextSibling &&
+        (e.currentTarget.nextSibling as HTMLButtonElement).focus();
+    }
+    if (e.key === "ArrowUp") {
+      e.currentTarget.previousSibling &&
+        (e.currentTarget.previousSibling as HTMLButtonElement).focus();
     }
   };
 
@@ -133,7 +155,7 @@ const MultiSelect = <T extends IIdName>({
             type="text"
             onChange={handleInputChange}
             {...htmlTextInputProps}
-            onKeyDown={handleKeyDown}
+            onKeyDown={handleKeyDownOnInput}
           />
           <button
             type="submit"
@@ -149,20 +171,21 @@ const MultiSelect = <T extends IIdName>({
         lookupFunctionResults.length > 0 &&
         state !== ErrorState.Loading &&
         dropdownIsVisible && (
-          <ul
+          <div
+            ref={dropdownRef}
             className={`mt-1 py-1 bg-white shadow border border-slate-300 rounded absolute w-full`}
           >
             {lookupFunctionResults.map((x) => (
-              <li key={x.id}>
-                <button
-                  className="py-3 px-2 focus:bg-blue-500 focus:outline-none focus:text-white hover:bg-slate-200 w-full text-left"
-                  onClick={() => handleSelect(x)}
-                >
-                  {x.name}
-                </button>
-              </li>
+              <button
+                key={x.id}
+                className="py-3 px-2 focus:bg-blue-500 focus:outline-none focus:text-white hover:bg-slate-200 w-full text-left"
+                onClick={() => handleSelect(x)}
+                onKeyDown={handleKeyDownOnDropdownItem}
+              >
+                {x.name}
+              </button>
             ))}
-          </ul>
+          </div>
         )}
 
       {/* Messages */}
