@@ -14,7 +14,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && tailwind:deploy",
+    "build": "react-scripts build && npm run tailwind:deploy",
 	"tailwind:watch": "npx tailwindcss -i ./src/css/input.css -o ./src/css/output.css --watch",
 	"tailwind:deploy":  "npx tailwindcss -i ./src/css/input.css -o ./public/output.css"
   },
