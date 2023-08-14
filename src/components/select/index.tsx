@@ -28,14 +28,16 @@ const MultiSelect = <T extends IIdName>({
   const [selectedResults, setSelectedResults] = useState<T[]>(selectedItems);
   const [state, setState] = useState<ErrorState>(ErrorState.None);
   const [inputText, setInputText] = useState("");
-  const [isVisible, setIsVisible] = useState(false);
+  const [dropdownIsVisible, setDropdownIsVisible] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // lookup results with the provided looked function from props
   const lookupResults = (searchString: string, callback: () => void) => {
     if (searchString) {
       lookupFunction(searchString).then((apiResponse) => {
+        // dopm't show selected results in list of searched-for items
         const filteredArray = apiResponse.filter((item1) =>
           selectedResults.every((item2) => item1.name !== item2.name)
         );
@@ -53,9 +55,9 @@ const MultiSelect = <T extends IIdName>({
     }
   };
 
-  // called when an item is selected
+  // select an item from the dropdown
   const handleSelect = (selectedItem: T) => {
-    //setSelectedResults((prev) => [...prev, selectedItem]);
+    // remove selected item from dropdown list
     setLookupFunctionResults((prev) => {
       const filteredResults = prev?.filter((x) => x.id !== selectedItem.id);
       if (filteredResults.length === 0) {
@@ -63,8 +65,9 @@ const MultiSelect = <T extends IIdName>({
       }
       return filteredResults;
     });
+    // call function to let parent component know
     onItemSelect(selectedItem);
-
+    // highlight the text in the input
     inputRef.current?.select();
   };
 
@@ -79,7 +82,7 @@ const MultiSelect = <T extends IIdName>({
   };
 
   const handleInputChange = debounce((searchString: string) => {
-    setIsVisible(true);
+    setDropdownIsVisible(true);
     setState(ErrorState.Loading);
     setInputText(searchString); // used for form submit
     lookupResults(searchString, resetErrorState);
@@ -87,32 +90,29 @@ const MultiSelect = <T extends IIdName>({
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsVisible(true);
+    setDropdownIsVisible(true);
     setState(ErrorState.Loading);
     lookupResults(inputText, resetErrorState);
   };
 
-  const divRef = useRef<HTMLDivElement>(null);
-
+  // close dropdowns if user clicks outside select component
   useEffect(() => {
-    // Attach event listener to detect clicks outside the div
     const handleClickOutside = (event: any) => {
-      if (divRef.current && !divRef.current.contains(event.target)) {
-        setIsVisible(false);
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target)
+      ) {
+        setDropdownIsVisible(false);
       }
     };
-
-    // Add event listener
     document.addEventListener("mousedown", handleClickOutside);
-
-    // Clean up event listener on unmount
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   return (
-    <div className="relative" ref={divRef}>
+    <div className="relative" ref={containerRef}>
       {/* Input Element */}
       <form onSubmit={handleFormSubmit}>
         <label className="flex relative flex-col bg-white border border-slate-300 focus-within:border-blue-500 focus-within:outline  focus-within:outline-slate-200 focus-within:outline-3 shadow rounded pt-1 pb-2 pl-2 pr-10">
@@ -137,7 +137,7 @@ const MultiSelect = <T extends IIdName>({
       {lookupFunctionResults &&
         lookupFunctionResults.length > 0 &&
         state !== ErrorState.Loading &&
-        isVisible && (
+        dropdownIsVisible && (
           <ul
             className={`mt-1 py-1 bg-white shadow border border-slate-300 rounded absolute w-full`}
           >
@@ -155,7 +155,7 @@ const MultiSelect = <T extends IIdName>({
         )}
 
       {/* Messages */}
-      {isVisible &&
+      {dropdownIsVisible &&
         (state === ErrorState.NoResultsFound ||
           state === ErrorState.Loading) && (
           <div className="mt-1 py-3 text-slate-800 text-center italic bg-white shadow border border-slate-300 rounded absolute w-full">
