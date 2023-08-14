@@ -52,7 +52,7 @@ const App = () => {
   };
 
   return (
-    <div className="pt-16 max-w-xs mx-auto">
+    <div className="py-16 max-w-xs mx-auto">
       <h2 className="text-lg py-1">Fruits to choose from</h2>
       <p className="text-slate-700 leading-5 pb-4">
         {fakeData.map((x) => x.name).join(", ")}

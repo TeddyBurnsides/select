@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import IIdName from "../../types/IIdName";
 import debounce from "../../utils/debounce";
 
-enum ErrorState {
+enum Alerts {
   None = 1,
   Loading = 2,
   NoResultsFound = 3,
@@ -13,7 +13,7 @@ interface Props<T> extends React.InputHTMLAttributes<HTMLInputElement> {
   lookupFunction: (searchString: string) => Promise<T[]>;
   debounceInMilliseconds?: number;
   onItemSelect: (selectedItem: T) => void;
-  label: string;
+  label?: string;
 }
 
 const MultiSelect = <T extends IIdName>({
@@ -25,8 +25,9 @@ const MultiSelect = <T extends IIdName>({
   ...htmlTextInputProps
 }: Props<T>) => {
   const [lookupFunctionResults, setLookupFunctionResults] = useState<T[]>([]);
-  const [selectedResults, setSelectedResults] = useState<T[]>(selectedItems);
-  const [state, setState] = useState<ErrorState>(ErrorState.None);
+  const [selectedItemsInternal, setSelectedItemsInternal] =
+    useState<T[]>(selectedItems);
+  const [alerts, setAlerts] = useState<Alerts>(Alerts.None);
   const [inputText, setInputText] = useState("");
   const [dropdownIsVisible, setDropdownIsVisible] = useState(false);
 
@@ -40,12 +41,12 @@ const MultiSelect = <T extends IIdName>({
       lookupFunction(searchString).then((apiResponse) => {
         // dopm't show selected results in list of searched-for items
         const filteredArray = apiResponse.filter((item1) =>
-          selectedResults.every((item2) => item1.name !== item2.name)
+          selectedItemsInternal.every((item2) => item1.name !== item2.name)
         );
         setLookupFunctionResults(filteredArray);
         callback(); // reset loading state
         if (filteredArray.length === 0) {
-          setState(ErrorState.NoResultsFound);
+          setAlerts(Alerts.NoResultsFound);
         } else {
           resetErrorState();
         }
@@ -62,7 +63,7 @@ const MultiSelect = <T extends IIdName>({
     setLookupFunctionResults((prev) => {
       const filteredResults = prev?.filter((x) => x.id !== selectedItem.id);
       if (filteredResults.length === 0) {
-        setState(ErrorState.NoResultsFound);
+        setAlerts(Alerts.NoResultsFound);
       }
       return filteredResults;
     });
@@ -74,19 +75,19 @@ const MultiSelect = <T extends IIdName>({
 
   // update internal results list with the passed in prop
   useEffect(() => {
-    setSelectedResults(selectedItems);
+    setSelectedItemsInternal(selectedItems);
   }, [selectedItems]);
 
   // callback to reset loading state
   const resetErrorState = () => {
-    setState(ErrorState.None);
+    setAlerts(Alerts.None);
   };
 
   const handleInputChange = debounce(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const searchString = e.target.value;
       setDropdownIsVisible(true);
-      setState(ErrorState.Loading);
+      setAlerts(Alerts.Loading);
       setInputText(searchString); // used for form submit
       lookupResults(searchString, resetErrorState);
     },
@@ -122,7 +123,7 @@ const MultiSelect = <T extends IIdName>({
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setDropdownIsVisible(true);
-    setState(ErrorState.Loading);
+    setAlerts(Alerts.Loading);
     lookupResults(inputText, resetErrorState);
   };
 
@@ -146,8 +147,8 @@ const MultiSelect = <T extends IIdName>({
     <div className="relative" ref={containerRef}>
       {/* Input Element */}
       <form onSubmit={handleFormSubmit}>
-        <label className="flex relative flex-col bg-white border border-slate-300 focus-within:border-blue-500 focus-within:outline  focus-within:outline-slate-200 focus-within:outline-3 shadow rounded pt-1 pb-2 pl-2 pr-10">
-          <div className="text-sm py-1 opacity-70">{label}</div>{" "}
+        <label className="flex relative flex-col bg-white border border-slate-300 focus-within:border-blue-500 focus-within:outline  focus-within:outline-slate-200 focus-within:outline-3 shadow rounded py-2 pl-2 pr-10">
+          {label && <div className="text-sm opacity-70">{label}</div>}
           <input
             ref={inputRef}
             className="py-1 bg-transparent border-none focus:outline-none"
@@ -158,7 +159,7 @@ const MultiSelect = <T extends IIdName>({
           />
           <button
             type="submit"
-            className="absolute bottom-1 right-2 hover:bg-slate-200 rounded px-1 text-lg"
+            className="absolute bottom-2 right-2 hover:bg-slate-200 rounded px-1 text-lg"
           >
             &#x1F50E;
           </button>
@@ -168,7 +169,7 @@ const MultiSelect = <T extends IIdName>({
       {/* Dropdown of search results */}
       {lookupFunctionResults &&
         lookupFunctionResults.length > 0 &&
-        state !== ErrorState.Loading &&
+        alerts !== Alerts.Loading &&
         dropdownIsVisible && (
           <div
             ref={dropdownRef}
@@ -189,12 +190,11 @@ const MultiSelect = <T extends IIdName>({
 
       {/* Messages */}
       {dropdownIsVisible &&
-        (state === ErrorState.NoResultsFound ||
-          state === ErrorState.Loading) && (
+        (alerts === Alerts.NoResultsFound || alerts === Alerts.Loading) && (
           <div className="mt-1 py-3 text-slate-800 text-center italic bg-white shadow border border-slate-300 rounded absolute w-full">
-            {state === ErrorState.NoResultsFound &&
+            {alerts === Alerts.NoResultsFound &&
               "No results match search query"}
-            {state === ErrorState.Loading && "Loading..."}
+            {alerts === Alerts.Loading && "Loading..."}
           </div>
         )}
     </div>
