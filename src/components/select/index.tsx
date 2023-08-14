@@ -30,8 +30,9 @@ const MultiSelect = <T extends IIdName>({
   const [inputText, setInputText] = useState("");
   const [dropdownIsVisible, setDropdownIsVisible] = useState(false);
 
-  const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // lookup results with the provided looked function from props
   const lookupResults = (searchString: string, callback: () => void) => {
@@ -91,8 +92,6 @@ const MultiSelect = <T extends IIdName>({
     },
     debounceInMilliseconds
   );
-
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleKeyDownOnInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -173,7 +172,7 @@ const MultiSelect = <T extends IIdName>({
         dropdownIsVisible && (
           <div
             ref={dropdownRef}
-            className={`mt-1 py-1 bg-white shadow border border-slate-300 rounded absolute w-full`}
+            className={`max-h-64 overflow-y-scroll mt-1 py-1 bg-white shadow border border-slate-300 rounded absolute w-full`}
           >
             {lookupFunctionResults.map((x) => (
               <button
