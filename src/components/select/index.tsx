@@ -28,6 +28,7 @@ const MultiSelect = <T extends IIdName>({
   const [selectedResults, setSelectedResults] = useState<T[]>(selectedItems);
   const [state, setState] = useState<ErrorState>(ErrorState.None);
   const [inputText, setInputText] = useState("");
+  const [isVisible, setIsVisible] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -78,6 +79,7 @@ const MultiSelect = <T extends IIdName>({
   };
 
   const handleInputChange = debounce((searchString: string) => {
+    setIsVisible(true);
     setState(ErrorState.Loading);
     setInputText(searchString); // used for form submit
     lookupResults(searchString, resetErrorState);
@@ -85,12 +87,32 @@ const MultiSelect = <T extends IIdName>({
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsVisible(true);
     setState(ErrorState.Loading);
     lookupResults(inputText, resetErrorState);
   };
 
+  const divRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Attach event listener to detect clicks outside the div
+    const handleClickOutside = (event: any) => {
+      if (divRef.current && !divRef.current.contains(event.target)) {
+        setIsVisible(false);
+      }
+    };
+
+    // Add event listener
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Clean up event listener on unmount
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={divRef}>
       {/* Input Element */}
       <form onSubmit={handleFormSubmit}>
         <label className="flex relative flex-col bg-white border border-slate-300 focus-within:border-blue-500 focus-within:outline  focus-within:outline-slate-200 focus-within:outline-3 shadow rounded pt-1 pb-2 pl-2 pr-10">
@@ -112,30 +134,36 @@ const MultiSelect = <T extends IIdName>({
       </form>
 
       {/* Dropdown of search results */}
-      {lookupFunctionResults && lookupFunctionResults.length > 0 && (
-        <ul className="mt-1 py-1 bg-white shadow border border-slate-300 rounded absolute w-full">
-          {lookupFunctionResults.map((x) => (
-            <li key={x.id}>
-              <button
-                className="py-3 px-2 focus:bg-blue-500 focus:outline-none focus:text-white hover:bg-slate-200 w-full text-left"
-                onClick={() => handleSelect(x)}
-              >
-                {x.name}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      {lookupFunctionResults &&
+        lookupFunctionResults.length > 0 &&
+        state !== ErrorState.Loading &&
+        isVisible && (
+          <ul
+            className={`mt-1 py-1 bg-white shadow border border-slate-300 rounded absolute w-full`}
+          >
+            {lookupFunctionResults.map((x) => (
+              <li key={x.id}>
+                <button
+                  className="py-3 px-2 focus:bg-blue-500 focus:outline-none focus:text-white hover:bg-slate-200 w-full text-left"
+                  onClick={() => handleSelect(x)}
+                >
+                  {x.name}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
 
       {/* Messages */}
-      {(state === ErrorState.NoResultsFound ||
-        state === ErrorState.Loading) && (
-        <div className="mt-1 py-3 text-slate-800 text-center italic bg-white shadow border border-slate-300 rounded absolute w-full">
-          {state === ErrorState.NoResultsFound &&
-            "No results match search query"}
-          {state === ErrorState.Loading && "Loading..."}
-        </div>
-      )}
+      {isVisible &&
+        (state === ErrorState.NoResultsFound ||
+          state === ErrorState.Loading) && (
+          <div className="mt-1 py-3 text-slate-800 text-center italic bg-white shadow border border-slate-300 rounded absolute w-full">
+            {state === ErrorState.NoResultsFound &&
+              "No results match search query"}
+            {state === ErrorState.Loading && "Loading..."}
+          </div>
+        )}
     </div>
   );
 };

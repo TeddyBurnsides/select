@@ -2,6 +2,7 @@ import { useState } from "react";
 import MultiSelect from "./components/select";
 import IIdName from "./types/IIdName";
 import "./css/output.css";
+import Pill from "./components/pill";
 
 const fakeData: IIdName[] = [
   { id: 1, name: "Option 1" },
@@ -26,8 +27,12 @@ const App = () => {
     });
   };
 
-  const addItemToList = (newItem: IIdName) => {
+  const addItem = (newItem: IIdName) => {
     setSelectedItems((prev) => [...prev, newItem]);
+  };
+
+  const removeItem = (item: IIdName) => {
+    setSelectedItems((prev) => [...prev.filter((x) => x.id !== item.id)]);
   };
 
   return (
@@ -41,16 +46,14 @@ const App = () => {
         ))}
       </ul>
       <h2 className="text-lg py-1">Currently Selected Items</h2>
-      <ul className="pb-2">
+      <ul className="pb-2 flex gap-2 flex-wrap">
         {selectedItems.map((x) => (
-          <li className="ml-4 py-1 list-disc" key={x.id}>
-            {x.name}
-          </li>
+          <Pill key={x.id} item={x} onDelete={removeItem} />
         ))}
       </ul>
-      <div className="max-w-xs pt-4">
+      <div className="max-w-xs ">
         <MultiSelect
-          onItemSelect={addItemToList}
+          onItemSelect={addItem}
           selectedItems={selectedItems}
           lookupFunction={fakeApiCall}
           label="Search"
