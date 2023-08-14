@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import IIdName from "../../types/IIdName";
 import debounce from "../../utils/debounce";
 
@@ -81,12 +81,22 @@ const MultiSelect = <T extends IIdName>({
     setState(ErrorState.None);
   };
 
-  const handleInputChange = debounce((searchString: string) => {
-    setDropdownIsVisible(true);
-    setState(ErrorState.Loading);
-    setInputText(searchString); // used for form submit
-    lookupResults(searchString, resetErrorState);
-  }, debounceInMilliseconds);
+  const handleInputChange = debounce(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const searchString = e.target.value;
+      setDropdownIsVisible(true);
+      setState(ErrorState.Loading);
+      setInputText(searchString); // used for form submit
+      lookupResults(searchString, resetErrorState);
+    },
+    debounceInMilliseconds
+  );
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      lookupResults(inputText, resetErrorState);
+    }
+  };
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -121,8 +131,9 @@ const MultiSelect = <T extends IIdName>({
             ref={inputRef}
             className="py-1 bg-transparent border-none focus:outline-none"
             type="text"
-            onChange={(e) => handleInputChange(e.target.value)}
+            onChange={handleInputChange}
             {...htmlTextInputProps}
+            onKeyDown={handleKeyDown}
           />
           <button
             type="submit"

@@ -1,8 +1,8 @@
 {
   "name": "tew-component-library",
-  "homepage": "https://teddyburnsides.github.io/select/",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://select-teddyburnsides.vercel.app/",
   "dependencies": {
     "@types/node": "^16.18.40",
     "@types/react": "^18.2.20",
@@ -14,11 +14,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && tailwind:deploy",
 	"tailwind:watch": "npx tailwindcss -i ./src/css/input.css -o ./src/css/output.css --watch",
-	"tailwind:deploy":  "npx tailwindcss -i ./src/css/input.css -o ./public/output.css",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+	"tailwind:deploy":  "npx tailwindcss -i ./src/css/input.css -o ./public/output.css"
   },
   "eslintConfig": {
     "extends": [
