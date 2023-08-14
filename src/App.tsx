@@ -5,12 +5,14 @@ import "./css/output.css";
 import Pill from "./components/pill";
 
 const fakeData: IIdName[] = [
-  { id: 1, name: "Option 1" },
-  { id: 4, name: "Option 2" },
-  { id: 5, name: "Testing" },
-  { id: 2, name: "Testing 3" },
-  { id: 3, name: "Testing 4" },
-  { id: 6, name: "Pre selected item" },
+  { id: 1, name: "Apples" },
+  { id: 7, name: "Red Delicious Apples" },
+  { id: 8, name: "Granny Smith Apples" },
+  { id: 4, name: "Bananas" },
+  { id: 5, name: "Peaches" },
+  { id: 2, name: "Plums" },
+  { id: 3, name: "Pears" },
+  { id: 6, name: "Sweet Plums" },
 ];
 
 const App = () => {
@@ -36,30 +38,23 @@ const App = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="pt-16 max-w-xs mx-auto">
       <h2 className="text-lg py-1">Possible Items for Selection</h2>
-      <ul className="pb-2">
-        {fakeData.map((x) => (
-          <li className="ml-4 py-1 list-disc" key={x.id}>
-            {x.name}
-          </li>
-        ))}
-      </ul>
-      <h2 className="text-lg py-1">Currently Selected Items</h2>
-      <ul className="pb-2 flex gap-2 flex-wrap">
+      <p className="text-slate-700 leading-5">
+        {fakeData.map((x) => x.name).join(", ")}
+      </p>
+      <div className="py-2 flex gap-2 flex-wrap">
         {selectedItems.map((x) => (
           <Pill key={x.id} item={x} onDelete={removeItem} />
         ))}
-      </ul>
-      <div className="max-w-xs ">
-        <MultiSelect
-          onItemSelect={addItem}
-          selectedItems={selectedItems}
-          lookupFunction={fakeApiCall}
-          label="Search"
-          debounceInMilliseconds={200}
-        />
       </div>
+      <MultiSelect
+        onItemSelect={addItem}
+        selectedItems={selectedItems}
+        lookupFunction={fakeApiCall}
+        label="Search for fruit"
+        debounceInMilliseconds={200}
+      />
     </div>
   );
 };
