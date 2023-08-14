@@ -1,5 +1,7 @@
-# Generic HTML Multi Select component
+# Multi-Select React Component ([Live Demo](https://select-omega.vercel.app/))
 
-## Goal
+## Dependencies
 
-Create a multi-select React component with the least amount of overhead as possible.
+- React
+- TypeScript
+- Tailwind CSS
