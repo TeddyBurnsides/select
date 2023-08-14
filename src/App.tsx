@@ -3,45 +3,10 @@ import MultiSelect from "./components/select";
 import IIdName from "./types/IIdName";
 import "./css/output.css";
 import Pill from "./components/pill";
-
-const fakeData: IIdName[] = [
-  { id: 1, name: "Apples" },
-  { id: 7, name: "Red Delicious Apples" },
-  { id: 8, name: "Granny Smith Apples" },
-  { id: 9, name: "Granny Apples" },
-  { id: 10, name: "Super nice Apples" },
-  { id: 11, name: "Just another Apples" },
-  { id: 12, name: "I hate Apples" },
-  {
-    id: 10,
-    name: "What even more Apples? How is this even possible, more and more?",
-  },
-  { id: 11, name: "yes that's right, we love Apples" },
-  { id: 12, name: "Dang Apples" },
-  { id: 4, name: "Bananas" },
-  { id: 5, name: "Peaches" },
-  { id: 2, name: "Plums" },
-  { id: 3, name: "Pears" },
-  { id: 6, name: "Sweet Plums" },
-];
+import { fakeApiCall, fakeData } from "./utils/fakeData";
 
 const App = () => {
   const [selectedItems, setSelectedItems] = useState<IIdName[]>([fakeData[5]]);
-
-  const fakeApiCall = (stringToFilterOn: string): Promise<IIdName[]> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const filteredData = fakeData.filter(
-          (x) =>
-            x.name
-              .toLowerCase()
-              .includes(stringToFilterOn.toLocaleLowerCase()) ||
-            x.id === Number(stringToFilterOn)
-        );
-        resolve(filteredData);
-      }, 500);
-    });
-  };
 
   const addItem = (newItem: IIdName) => {
     setSelectedItems((prev) => [...prev, newItem]);
