@@ -177,7 +177,7 @@ const MultiSelect = <T extends IIdName>({
             {lookupFunctionResults.map((x) => (
               <button
                 key={x.id}
-                className="py-3 px-2 focus:bg-blue-500 focus:outline-none focus:text-white hover:bg-slate-200 w-full text-left"
+                className="leading-6 py-2 px-2 focus:bg-blue-500 focus:outline-none focus:text-white hover:bg-slate-200 w-full text-left"
                 onClick={() => handleSelect(x)}
                 onKeyDown={handleKeyDownOnDropdownItem}
               >

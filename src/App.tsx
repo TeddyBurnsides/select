@@ -12,6 +12,12 @@ const fakeData: IIdName[] = [
   { id: 10, name: "Super nice Apples" },
   { id: 11, name: "Just another Apples" },
   { id: 12, name: "I hate Apples" },
+  {
+    id: 10,
+    name: "What even more Apples? How is this even possible, more and more?",
+  },
+  { id: 11, name: "yes that's right, we love Apples" },
+  { id: 12, name: "Dang Apples" },
   { id: 4, name: "Bananas" },
   { id: 5, name: "Peaches" },
   { id: 2, name: "Plums" },
@@ -25,8 +31,12 @@ const App = () => {
   const fakeApiCall = (stringToFilterOn: string): Promise<IIdName[]> => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const filteredData = fakeData.filter((x) =>
-          x.name.toLowerCase().includes(stringToFilterOn.toLocaleLowerCase())
+        const filteredData = fakeData.filter(
+          (x) =>
+            x.name
+              .toLowerCase()
+              .includes(stringToFilterOn.toLocaleLowerCase()) ||
+            x.id === Number(stringToFilterOn)
         );
         resolve(filteredData);
       }, 500);
@@ -43,8 +53,8 @@ const App = () => {
 
   return (
     <div className="pt-16 max-w-xs mx-auto">
-      <h2 className="text-lg py-1">Possible Items for Selection</h2>
-      <p className="text-slate-700 leading-5">
+      <h2 className="text-lg py-1">Fruits to choose from</h2>
+      <p className="text-slate-700 leading-5 pb-4">
         {fakeData.map((x) => x.name).join(", ")}
       </p>
       <div className="py-2 flex gap-2 flex-wrap">
