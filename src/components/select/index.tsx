@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import IIdName from "../../types/IIdName";
 import debounce from "../../utils/debounce";
 
@@ -13,7 +13,7 @@ interface Props<T> extends React.InputHTMLAttributes<HTMLInputElement> {
   lookupFunction: (searchString: string) => Promise<T[]>;
   debounceInMilliseconds?: number;
   onItemSelect: (selectedItem: T) => void;
-  label?: string;
+  label: string;
 }
 
 const MultiSelect = <T extends IIdName>({
@@ -28,6 +28,8 @@ const MultiSelect = <T extends IIdName>({
   const [selectedResults, setSelectedResults] = useState<T[]>(selectedItems);
   const [state, setState] = useState<ErrorState>(ErrorState.None);
   const [inputText, setInputText] = useState("");
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // lookup results with the provided looked function from props
   const lookupResults = (searchString: string, callback: () => void) => {
@@ -61,6 +63,8 @@ const MultiSelect = <T extends IIdName>({
       return filteredResults;
     });
     onItemSelect(selectedItem);
+
+    inputRef.current?.select();
   };
 
   // update internal results list with the passed in prop
@@ -85,38 +89,54 @@ const MultiSelect = <T extends IIdName>({
     lookupResults(inputText, resetErrorState);
   };
 
-  const handleFormClear = () => {
-    setLookupFunctionResults([]);
-  };
-
   return (
-    <>
+    <div className="relative">
+      {/* Input Element */}
       <form onSubmit={handleFormSubmit}>
-        {label && (
-          <div>
-            <label>{label}</label>
-          </div>
-        )}
-        <input
-          type="text"
-          onChange={(e) => handleInputChange(e.target.value)}
-          {...htmlTextInputProps}
-        />
-        <button type="reset" onClick={handleFormClear}>
-          Clear
-        </button>
-        <button type="submit">Search</button>
-        {state === ErrorState.Loading && "Loading..."}
+        <label className="flex relative flex-col bg-white border border-slate-300 focus-within:border-blue-500 focus-within:outline  focus-within:outline-slate-200 focus-within:outline-3 shadow rounded pt-1 pb-2 pl-2 pr-10">
+          <div className="text-sm py-1 opacity-70">{label}</div>{" "}
+          <input
+            ref={inputRef}
+            className="py-1 bg-transparent border-none focus:outline-none"
+            type="text"
+            onChange={(e) => handleInputChange(e.target.value)}
+            {...htmlTextInputProps}
+          />
+          <button
+            type="submit"
+            className="absolute bottom-1 right-2 hover:bg-slate-200 rounded px-1 text-lg"
+          >
+            &#x1F50E;
+          </button>
+        </label>
       </form>
-      <ul>
-        {lookupFunctionResults?.map((x) => (
-          <li key={x.id}>
-            <button onClick={() => handleSelect(x)}>{x.name}</button>
-          </li>
-        ))}
-      </ul>
-      <div>{state === ErrorState.NoResultsFound && "No Results Found"}</div>
-    </>
+
+      {/* Dropdown of search results */}
+      {lookupFunctionResults && lookupFunctionResults.length > 0 && (
+        <ul className="mt-1 py-1 bg-white shadow border border-slate-300 rounded absolute w-full">
+          {lookupFunctionResults.map((x) => (
+            <li key={x.id}>
+              <button
+                className="py-3 px-2 focus:bg-blue-500 focus:outline-none focus:text-white hover:bg-slate-200 w-full text-left"
+                onClick={() => handleSelect(x)}
+              >
+                {x.name}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Messages */}
+      {(state === ErrorState.NoResultsFound ||
+        state === ErrorState.Loading) && (
+        <div className="mt-1 py-3 text-slate-800 text-center italic bg-white shadow border border-slate-300 rounded absolute w-full">
+          {state === ErrorState.NoResultsFound &&
+            "No results match search query"}
+          {state === ErrorState.Loading && "Loading..."}
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import MultiSelect from "./components/select";
 import IIdName from "./types/IIdName";
+import "./css/output.css";
 
 const fakeData: IIdName[] = [
   { id: 1, name: "Option 1" },
@@ -12,7 +13,7 @@ const fakeData: IIdName[] = [
 ];
 
 const App = () => {
-  const [items, setItems] = useState<IIdName[]>([fakeData[5]]);
+  const [selectedItems, setSelectedItems] = useState<IIdName[]>([fakeData[5]]);
 
   const fakeApiCall = (stringToFilterOn: string): Promise<IIdName[]> => {
     return new Promise((resolve) => {
@@ -26,23 +27,36 @@ const App = () => {
   };
 
   const addItemToList = (newItem: IIdName) => {
-    setItems((prev) => [...prev, newItem]);
+    setSelectedItems((prev) => [...prev, newItem]);
   };
 
   return (
-    <div>
-      <ul>
-        {items.map((x) => (
-          <li key={x.id}>{x.name}</li>
+    <div className="p-4">
+      <h2 className="text-lg py-1">Possible Items for Selection</h2>
+      <ul className="pb-2">
+        {fakeData.map((x) => (
+          <li className="ml-4 py-1 list-disc" key={x.id}>
+            {x.name}
+          </li>
         ))}
       </ul>
-      <MultiSelect
-        onItemSelect={addItemToList}
-        selectedItems={items}
-        lookupFunction={fakeApiCall}
-        label="Search for things"
-        debounceInMilliseconds={200}
-      />
+      <h2 className="text-lg py-1">Currently Selected Items</h2>
+      <ul className="pb-2">
+        {selectedItems.map((x) => (
+          <li className="ml-4 py-1 list-disc" key={x.id}>
+            {x.name}
+          </li>
+        ))}
+      </ul>
+      <div className="max-w-xs pt-4">
+        <MultiSelect
+          onItemSelect={addItemToList}
+          selectedItems={selectedItems}
+          lookupFunction={fakeApiCall}
+          label="Search"
+          debounceInMilliseconds={200}
+        />
+      </div>
     </div>
   );
 };
