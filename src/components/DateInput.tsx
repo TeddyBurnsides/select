@@ -17,6 +17,8 @@ const DateInput = ({
         <TextInput
             label={label}
             wrapperClassName={twMerge(wrapperClassName, "min-w-36")}
+            inputWrapperClassName="inline-flex"
+            className="grow"
             labelClassName={labelClassName}
             type="date"
             {...htmlInputProps}

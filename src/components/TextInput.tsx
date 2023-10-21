@@ -4,12 +4,14 @@ import LabelWrapper from "./LabelWrapper";
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     wrapperClassName?: string;
+    inputWrapperClassName?: string;
     labelClassName?: string;
 }
 
 const TextInput = ({
     label,
     wrapperClassName,
+    inputWrapperClassName,
     labelClassName,
     ...htmlInputProps
 }: Props) => {
@@ -17,6 +19,7 @@ const TextInput = ({
         <LabelWrapper
             wrapperClassName={wrapperClassName}
             labelClassName={labelClassName}
+            inputWrapperClassName={inputWrapperClassName}
             label={label}
         >
             <input

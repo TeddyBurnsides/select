@@ -39,7 +39,7 @@ const Home = () => {
                 />
             </div>
             <div>
-                <TextInput label="Company Name" />
+                <TextInput placeholder="Enter something" label="Company Name" />
             </div>
             <div>
                 <DateInput label="Date" />

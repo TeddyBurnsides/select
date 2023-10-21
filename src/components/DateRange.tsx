@@ -24,7 +24,7 @@ const DateRange = ({ onChange, defaultStartDate, defaultEndDate }: Props) => {
                     setStart(e.target.value);
                     if (onChange) onChange(e.target.value, end);
                 }}
-                wrapperClassName="focus-within:outline-0 border-0 shadow-none rounded-none px-0"
+                wrapperClassName="focus-within:outline-0 border-0 shadow-none rounded-none pl-0 pr-3"
                 max={convertDateOuputToDateISOString(end)}
             />
             <DateInput
