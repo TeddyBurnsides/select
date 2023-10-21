@@ -1,4 +1,4 @@
-import { IColor } from "./IColor";
+import { IColor } from "../types/IColor";
 import { FaCheck } from "react-icons/fa";
 
 interface Props {
