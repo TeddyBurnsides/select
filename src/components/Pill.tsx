@@ -8,7 +8,7 @@ interface Props {
 const Pill = ({ item, onDelete }: Props) => {
     return (
         <div className="flex space-x-2 items-center rounded bg-blue-500/90 text-white px-2 py-1 text-sm">
-            <span>{item.name}</span>
+            <div className="truncate max-w-[12rem]">{item.name}</div>
             <button
                 onClick={() => onDelete(item)}
                 type="button"

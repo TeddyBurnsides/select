@@ -706,6 +706,18 @@ video {
   max-width: 32rem;
 }
 
+.max-w-full {
+  max-width: 100%;
+}
+
+.max-w-\[48rem\] {
+  max-width: 48rem;
+}
+
+.max-w-\[12rem\] {
+  max-width: 12rem;
+}
+
 .shrink {
   flex-shrink: 1;
 }
@@ -811,6 +823,12 @@ video {
 
 .overflow-y-scroll {
   overflow-y: scroll;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .whitespace-nowrap {
