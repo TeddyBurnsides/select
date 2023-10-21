@@ -188,7 +188,7 @@ const MultiSelect = <T extends IIdName>({
                 dropdownIsVisible && (
                     <div
                         ref={dropdownRef}
-                        className={`max-h-64 overflow-y-scroll mt-1 py-1 bg-white shadow border border-slate-300 rounded absolute w-full`}
+                        className={` z-50 max-h-64 overflow-y-scroll mt-1 py-1 bg-white shadow border border-slate-300 rounded absolute w-full`}
                     >
                         {lookupFunctionResults.map((x) => (
                             <button
