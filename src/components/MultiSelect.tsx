@@ -3,6 +3,7 @@ import IIdName from "../types/IIdName";
 import debounce from "../utils/debounce";
 import LabelWrapper from "./LabelWrapper";
 import Pill from "./Pill";
+import Spinner from "./Spinner";
 
 enum Alerts {
     None = 1,
@@ -172,12 +173,18 @@ const MultiSelect = <T extends IIdName>({
                             <Pill key={x.id} item={x} onDelete={onItemRemove} />
                         ))}
                         <div className="inline-flex">
-                            <button
-                                type="submit"
-                                className="rounded px-2 text-lg"
-                            >
-                                &#x1F50E;
-                            </button>
+                            <div className="h-5 w-5 mx-2">
+                                {alerts === Alerts.Loading ? (
+                                    <Spinner className="h-full w-full mt-1" />
+                                ) : (
+                                    <button
+                                        type="submit"
+                                        className="rounded text-lg"
+                                    >
+                                        &#x1F50E;
+                                    </button>
+                                )}
+                            </div>
                             <input
                                 ref={inputRef}
                                 className="py-1 bg-transparent border-none focus:outline-none grow"
@@ -198,7 +205,7 @@ const MultiSelect = <T extends IIdName>({
                 dropdownIsVisible && (
                     <div
                         ref={dropdownRef}
-                        className={` z-50 max-h-64 overflow-y-scroll mt-1 py-1 bg-white shadow border border-slate-300 rounded absolute w-full`}
+                        className={`z-50 max-h-64 overflow-y-scroll mt-1 py-1 bg-white shadow border border-slate-300 rounded absolute w-full`}
                     >
                         {lookupFunctionResults.map((x) => (
                             <button
@@ -213,16 +220,12 @@ const MultiSelect = <T extends IIdName>({
                     </div>
                 )}
 
-            {/* Messages */}
-            {dropdownIsVisible &&
-                (alerts === Alerts.NoResultsFound ||
-                    alerts === Alerts.Loading) && (
-                    <div className="mt-1 py-3 text-slate-800 text-center italic bg-white shadow border border-slate-300 rounded absolute w-full">
-                        {alerts === Alerts.NoResultsFound &&
-                            "No results match search query"}
-                        {alerts === Alerts.Loading && "Loading..."}
-                    </div>
-                )}
+            {/* No results found */}
+            {dropdownIsVisible && alerts === Alerts.NoResultsFound && (
+                <div className="z-50 mt-1 py-3 text-slate-800 text-center italic bg-white shadow border border-slate-300 rounded absolute w-full">
+                    {"No results found for '" + inputText + "'"}
+                </div>
+            )}
         </div>
     );
 };

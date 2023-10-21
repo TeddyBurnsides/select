@@ -8,6 +8,7 @@ import ColorPicker from "../components/ColorPicker";
 import { IColor } from "../types/IColor";
 import { Colors } from "../constants/Colors";
 import DateInput from "../components/DateInput";
+import Spinner from "../components/Spinner";
 
 const Home = () => {
     const [selectedItems, setSelectedItems] = useState<IIdName[]>([
@@ -34,7 +35,7 @@ const Home = () => {
                     selectedItems={selectedItems}
                     lookupFunction={fakeApiCall}
                     label="Search for fruit"
-                    debounceInMilliseconds={200}
+                    debounceInMilliseconds={600}
                     placeholder="Search..."
                 />
             </div>
@@ -47,11 +48,16 @@ const Home = () => {
             <div>
                 <DateRange />
             </div>
-            <ColorPicker
-                onChange={setColor}
-                colors={Colors}
-                selectedColor={color}
-            />
+            <div>
+                <ColorPicker
+                    onChange={setColor}
+                    colors={Colors}
+                    selectedColor={color}
+                />
+            </div>
+            <div className="w-6 h-6">
+                <Spinner className="h-full w-full" />
+            </div>
         </div>
     );
 };
