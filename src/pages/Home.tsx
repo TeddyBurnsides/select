@@ -10,8 +10,11 @@ import { Colors } from "../constants/Colors";
 import DateInput from "../components/DateInput";
 import Spinner from "../components/Spinner";
 import ComponentLabel from "./ComponentLabel";
+import SingleSelect from "../components/SingleSelect";
 
 const Home = () => {
+    // multi-select helpers
+
     const [selectedItems, setSelectedItems] = useState<IIdName[]>([
         fakeData[5],
         fakeData[4],
@@ -27,6 +30,20 @@ const Home = () => {
         setSelectedItems((prev) => [...prev.filter((x) => x.id !== item.id)]);
     };
 
+    // single select helpers
+
+    const [selectedItem, setSelectedItem] = useState<IIdName | undefined>(
+        fakeData[3]
+    );
+
+    const addItemSingle = (newItem: IIdName) => {
+        setSelectedItem(newItem);
+    };
+
+    const removeItemSingle = (item: IIdName) => {
+        setSelectedItem(undefined);
+    };
+
     return (
         <div className="px-10 flex flex-col space-y-10 mt-10">
             <ComponentLabel label="Multi-Select">
@@ -34,6 +51,17 @@ const Home = () => {
                     onItemRemove={removeItem}
                     onItemSelect={addItem}
                     selectedItems={selectedItems}
+                    lookupFunction={fakeApiCall}
+                    label="Search for fruit"
+                    debounceInMilliseconds={600}
+                    placeholder="Search..."
+                />
+            </ComponentLabel>
+            <ComponentLabel label="Single-Select">
+                <SingleSelect
+                    onItemRemove={removeItemSingle}
+                    onItemSelect={addItemSingle}
+                    selectedItem={selectedItem}
                     lookupFunction={fakeApiCall}
                     label="Search for fruit"
                     debounceInMilliseconds={600}
