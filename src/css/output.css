@@ -654,6 +654,10 @@ video {
   height: 1.25rem;
 }
 
+.h-12 {
+  height: 3rem;
+}
+
 .max-h-64 {
   max-height: 16rem;
 }
@@ -674,16 +678,68 @@ video {
   width: 1.25rem;
 }
 
+.w-48 {
+  width: 12rem;
+}
+
+.w-96 {
+  width: 24rem;
+}
+
+.w-12 {
+  width: 3rem;
+}
+
 .min-w-36 {
   min-width: 9rem;
+}
+
+.min-w-40 {
+  min-width: 10rem;
 }
 
 .max-w-md {
   max-width: 28rem;
 }
 
+.max-w-lg {
+  max-width: 32rem;
+}
+
+.shrink {
+  flex-shrink: 1;
+}
+
 .grow {
   flex-grow: 1;
+}
+
+.basis-1\/4 {
+  flex-basis: 25%;
+}
+
+.basis-1\/3 {
+  flex-basis: 33.333333%;
+}
+
+.basis-1\/2 {
+  flex-basis: 50%;
+}
+
+.basis-\[12rem\] {
+  flex-basis: 12rem;
+}
+
+.basis-\[16rem\] {
+  flex-basis: 16rem;
+}
+
+.basis-\[24rem\] {
+  flex-basis: 24rem;
+}
+
+.basis-\[32rem\] {
+  flex-basis: 32rem;
 }
 
 @-webkit-keyframes spin {
@@ -717,8 +773,16 @@ video {
   flex-wrap: wrap;
 }
 
+.items-start {
+  align-items: flex-start;
+}
+
 .items-center {
   align-items: center;
+}
+
+.justify-start {
+  justify-content: flex-start;
 }
 
 .justify-center {
@@ -749,6 +813,10 @@ video {
   overflow-y: scroll;
 }
 
+.whitespace-nowrap {
+  white-space: nowrap;
+}
+
 .rounded {
   border-radius: 0.25rem;
 }
@@ -777,6 +845,10 @@ video {
   border-left-width: 1px;
 }
 
+.border-b {
+  border-bottom-width: 1px;
+}
+
 .border-none {
   border-style: none;
 }
@@ -789,6 +861,14 @@ video {
 .border-white {
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
+}
+
+.border-black\/30 {
+  border-color: rgb(0 0 0 / 0.3);
+}
+
+.border-black\/20 {
+  border-color: rgb(0 0 0 / 0.2);
 }
 
 .bg-blue-500\/90 {
@@ -843,6 +923,11 @@ video {
   padding-bottom: 0.75rem;
 }
 
+.px-10 {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
+
 .pl-2 {
   padding-left: 0.5rem;
 }
@@ -871,12 +956,28 @@ video {
   padding-right: 0.75rem;
 }
 
+.pr-10 {
+  padding-right: 2.5rem;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem;
+}
+
+.pt-2 {
+  padding-top: 0.5rem;
+}
+
 .text-left {
   text-align: left;
 }
 
 .text-center {
   text-align: center;
+}
+
+.text-right {
+  text-align: right;
 }
 
 .text-lg {
@@ -892,6 +993,14 @@ video {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.uppercase {
+  text-transform: uppercase;
 }
 
 .italic {
@@ -919,6 +1028,10 @@ video {
 
 .opacity-70 {
   opacity: 0.7;
+}
+
+.opacity-50 {
+  opacity: 0.5;
 }
 
 .shadow {

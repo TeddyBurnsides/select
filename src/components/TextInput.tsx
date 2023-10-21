@@ -17,8 +17,8 @@ const TextInput = ({
 }: Props) => {
     return (
         <LabelWrapper
-            wrapperClassName={wrapperClassName}
-            labelClassName={labelClassName}
+            wrapperClassName={wrapperClassName + " grow"}
+            labelClassName={labelClassName + " flex"}
             inputWrapperClassName={inputWrapperClassName}
             label={label}
         >

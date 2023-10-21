@@ -1,28 +1,36 @@
 import { twMerge } from "tailwind-merge";
-import TextInput from "./TextInput";
+import LabelWrapper from "./LabelWrapper";
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;
     wrapperClassName?: string;
+    inputWrapperClassName?: string;
     labelClassName?: string;
 }
 
 const DateInput = ({
     label,
     wrapperClassName,
+    inputWrapperClassName,
     labelClassName,
     ...htmlInputProps
 }: Props) => {
     return (
-        <TextInput
+        <LabelWrapper
+            wrapperClassName={wrapperClassName + " min-w-40"}
+            labelClassName={labelClassName + " flex"}
+            inputWrapperClassName={inputWrapperClassName + " inline-flex"}
             label={label}
-            wrapperClassName={twMerge(wrapperClassName, "min-w-36")}
-            inputWrapperClassName="inline-flex"
-            className="grow"
-            labelClassName={labelClassName}
-            type="date"
-            {...htmlInputProps}
-        />
+        >
+            <input
+                type={"date"}
+                className={twMerge(
+                    htmlInputProps.className,
+                    "grow py-1 bg-transparent border-none focus:outline-none"
+                )}
+                {...htmlInputProps}
+            />
+        </LabelWrapper>
     );
 };
 

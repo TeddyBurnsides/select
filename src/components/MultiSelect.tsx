@@ -159,12 +159,12 @@ const MultiSelect = <T extends IIdName>({
     }, []);
 
     return (
-        <div className="relative" ref={containerRef}>
+        <div className="relative w-full" ref={containerRef}>
             {/* Input Element */}
             <form onSubmit={handleFormSubmit}>
                 <LabelWrapper
-                    wrapperClassName={wrapperClassName + "flex "}
-                    labelClassName={labelClassName}
+                    wrapperClassName={wrapperClassName + " flex"}
+                    labelClassName={labelClassName + " flex"}
                     label={label}
                     inputWrapperClassName={"flex flex-col"}
                 >

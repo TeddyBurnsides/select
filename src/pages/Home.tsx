@@ -9,6 +9,7 @@ import { IColor } from "../types/IColor";
 import { Colors } from "../constants/Colors";
 import DateInput from "../components/DateInput";
 import Spinner from "../components/Spinner";
+import ComponentLabel from "./ComponentLabel";
 
 const Home = () => {
     const [selectedItems, setSelectedItems] = useState<IIdName[]>([
@@ -27,8 +28,8 @@ const Home = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto flex flex-col space-y-10 mt-10">
-            <div>
+        <div className="px-10 flex flex-col space-y-10 mt-10">
+            <ComponentLabel label="Multi-Select">
                 <MultiSelect
                     onItemRemove={removeItem}
                     onItemSelect={addItem}
@@ -38,26 +39,26 @@ const Home = () => {
                     debounceInMilliseconds={600}
                     placeholder="Search..."
                 />
-            </div>
-            <div>
+            </ComponentLabel>
+            <ComponentLabel label="Text Input">
                 <TextInput placeholder="Enter something" label="Company Name" />
-            </div>
-            <div>
+            </ComponentLabel>
+            <ComponentLabel label="Date Input">
                 <DateInput label="Date" />
-            </div>
-            <div>
+            </ComponentLabel>
+            <ComponentLabel label="Date Range">
                 <DateRange />
-            </div>
-            <div>
+            </ComponentLabel>
+            <ComponentLabel label="Color Picker">
                 <ColorPicker
                     onChange={setColor}
                     colors={Colors}
                     selectedColor={color}
                 />
-            </div>
-            <div className="w-6 h-6">
-                <Spinner className="h-full w-full" />
-            </div>
+            </ComponentLabel>
+            <ComponentLabel label="Spinner">
+                <Spinner />
+            </ComponentLabel>
         </div>
     );
 };
