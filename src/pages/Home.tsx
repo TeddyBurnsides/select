@@ -40,6 +40,9 @@ const Home = () => {
                 />
             </div>
             <TextInput label="Company Name" />
+            <div>
+                <TextInput type="date" label="Date" />
+            </div>
             <DateRange />
             <ColorPicker
                 onChange={setColor}

@@ -617,6 +617,10 @@ video {
   display: flex;
 }
 
+.inline-flex {
+  display: inline-flex;
+}
+
 .h-8 {
   height: 2rem;
 }
@@ -631,6 +635,18 @@ video {
 
 .w-full {
   width: 100%;
+}
+
+.w-16 {
+  width: 4rem;
+}
+
+.w-24 {
+  width: 6rem;
+}
+
+.w-48 {
+  width: 12rem;
 }
 
 .max-w-xs {

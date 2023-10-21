@@ -18,7 +18,7 @@ const LabelWrapper = ({
     return (
         <label
             className={twMerge(
-                "flex relative flex-col bg-white border border-slate-300 focus-within:border-blue-500 focus-within:outline focus-within:outline-slate-200 focus-within:outline-3 shadow rounded py-2 pl-2 pr-2 ",
+                "inline-flex relative flex-col bg-white border border-slate-300 focus-within:border-blue-500 focus-within:outline focus-within:outline-slate-200 focus-within:outline-3 shadow rounded py-2 pl-2 pr-2 ",
                 wrapperClassName
             )}
         >
