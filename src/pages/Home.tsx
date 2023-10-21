@@ -1,17 +1,19 @@
 import { useState } from "react";
 import MultiSelect from "../components/MultiSelect";
 import IIdName from "../types/IIdName";
-import Pill from "../components/Pill";
 import { fakeApiCall, fakeData } from "../constants/sampleMultiSelectValues";
 import DateRange from "../components/DateRange";
 import TextInput from "../components/TextInput";
 import ColorPicker from "../components/ColorPicker";
 import { IColor } from "../types/IColor";
 import { Colors } from "../constants/Colors";
+import DateInput from "../components/DateInput";
 
 const Home = () => {
     const [selectedItems, setSelectedItems] = useState<IIdName[]>([
         fakeData[5],
+        fakeData[4],
+        fakeData[3],
     ]);
     const [color, setColor] = useState<IColor>();
 
@@ -24,26 +26,27 @@ const Home = () => {
     };
 
     return (
-        <div className="max-w-xs mx-auto flex flex-col space-y-10 mt-10">
+        <div className="max-w-md mx-auto flex flex-col space-y-10 mt-10">
             <div>
-                <div className="py-2 flex gap-2 flex-wrap">
-                    {selectedItems.map((x) => (
-                        <Pill key={x.id} item={x} onDelete={removeItem} />
-                    ))}
-                </div>
                 <MultiSelect
+                    onItemRemove={removeItem}
                     onItemSelect={addItem}
                     selectedItems={selectedItems}
                     lookupFunction={fakeApiCall}
                     label="Search for fruit"
                     debounceInMilliseconds={200}
+                    placeholder="Search..."
                 />
             </div>
-            <TextInput label="Company Name" />
             <div>
-                <TextInput type="date" label="Date" />
+                <TextInput label="Company Name" />
             </div>
-            <DateRange />
+            <div>
+                <DateInput label="Date" />
+            </div>
+            <div>
+                <DateRange />
+            </div>
             <ColorPicker
                 onChange={setColor}
                 colors={Colors}

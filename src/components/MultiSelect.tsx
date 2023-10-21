@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import IIdName from "../types/IIdName";
 import debounce from "../utils/debounce";
 import LabelWrapper from "./LabelWrapper";
+import Pill from "./Pill";
 
 enum Alerts {
     None = 1,
@@ -14,6 +15,7 @@ interface Props<T> extends React.InputHTMLAttributes<HTMLInputElement> {
     lookupFunction: (searchString: string) => Promise<T[]>;
     debounceInMilliseconds?: number;
     onItemSelect: (selectedItem: T) => void;
+    onItemRemove: (item: IIdName) => void;
     label?: string;
     wrapperClassName?: string;
     labelClassName?: string;
@@ -25,6 +27,7 @@ const MultiSelect = <T extends IIdName>({
     lookupFunction,
     debounceInMilliseconds = 300,
     label,
+    onItemRemove,
     onItemSelect,
     wrapperClassName,
     labelClassName,
@@ -162,22 +165,29 @@ const MultiSelect = <T extends IIdName>({
                     wrapperClassName={wrapperClassName + "flex "}
                     labelClassName={labelClassName}
                     label={label}
-                    inputWrapperClassName={"flex"}
+                    inputWrapperClassName={"flex flex-col"}
                 >
-                    <input
-                        ref={inputRef}
-                        className="py-1 bg-transparent border-none focus:outline-none grow"
-                        type="text"
-                        onChange={handleInputChange}
-                        {...htmlTextInputProps}
-                        onKeyDown={handleKeyDownOnInput}
-                    />
-                    <button
-                        type="submit"
-                        className="hover:bg-slate-200 rounded px-1 text-lg"
-                    >
-                        &#x1F50E;
-                    </button>
+                    <div className="flex gap-1 flex-wrap pt-1">
+                        {selectedItems.map((x) => (
+                            <Pill key={x.id} item={x} onDelete={onItemRemove} />
+                        ))}
+                        <div className="inline-flex">
+                            <button
+                                type="submit"
+                                className="rounded px-2 text-lg"
+                            >
+                                &#x1F50E;
+                            </button>
+                            <input
+                                ref={inputRef}
+                                className="py-1 bg-transparent border-none focus:outline-none grow"
+                                type="text"
+                                onChange={handleInputChange}
+                                {...htmlTextInputProps}
+                                onKeyDown={handleKeyDownOnInput}
+                            />
+                        </div>
+                    </div>
                 </LabelWrapper>
             </form>
 

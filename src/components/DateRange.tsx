@@ -1,7 +1,7 @@
 import { useState } from "react";
-import TextInput from "./TextInput";
 import convertDateOuputToDateISOString from "../utils/convertDateOuputToDateISOString";
 import LabelWrapper from "./LabelWrapper";
+import DateInput from "./DateInput";
 
 interface Props {
     defaultStartDate?: string;
@@ -14,9 +14,9 @@ const DateRange = ({ onChange, defaultStartDate, defaultEndDate }: Props) => {
     return (
         <LabelWrapper
             wrapperClassName="py-0 "
-            inputWrapperClassName={"flex flex-row"}
+            inputWrapperClassName={"inline-flex flex-row"}
         >
-            <TextInput
+            <DateInput
                 label="Start Date"
                 type="date"
                 defaultValue={defaultStartDate}
@@ -24,10 +24,10 @@ const DateRange = ({ onChange, defaultStartDate, defaultEndDate }: Props) => {
                     setStart(e.target.value);
                     if (onChange) onChange(e.target.value, end);
                 }}
-                wrapperClassName="focus-within:outline-0 border-0 shadow-none rounded-none px-0 grow"
+                wrapperClassName="focus-within:outline-0 border-0 shadow-none rounded-none px-0"
                 max={convertDateOuputToDateISOString(end)}
             />
-            <TextInput
+            <DateInput
                 label="End Date"
                 type="date"
                 defaultValue={defaultEndDate}
@@ -36,7 +36,7 @@ const DateRange = ({ onChange, defaultStartDate, defaultEndDate }: Props) => {
                     setEnd(e.target.value);
                     if (onChange) onChange(start, e.target.value);
                 }}
-                wrapperClassName="focus-within:outline-0 border-0 border-l shadow-none rounded-none pl-3 pr-0 grow"
+                wrapperClassName="focus-within:outline-0 border-0 border-l shadow-none rounded-none pl-3 pr-0"
             />
         </LabelWrapper>
     );
