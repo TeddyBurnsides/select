@@ -17,7 +17,10 @@ const Pill = ({ item, onDelete, className }: Props) => {
         >
             <div className="truncate max-w-[12rem]">{item.name}</div>
             <button
-                onClick={() => onDelete(item)}
+                onClick={(e) => {
+                    e.preventDefault();
+                    onDelete(item);
+                }}
                 type="button"
                 className="rounded-full px-1 hover:bg-white/30"
             >

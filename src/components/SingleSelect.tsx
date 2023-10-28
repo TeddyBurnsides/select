@@ -111,6 +111,7 @@ const SingleSelect = <T extends IIdName>({
 
     const handleKeyDownOnInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
+            e.preventDefault();
             lookupResults(inputText, resetErrorState);
         } else if (e.key === "ArrowDown") {
             // put focus on the first item in the list if arrowing down from input
@@ -135,11 +136,20 @@ const SingleSelect = <T extends IIdName>({
         }
     };
 
-    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleFormSubmit = (
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    ) => {
         e.preventDefault();
         setDropdownIsVisible(true);
         setAlerts(Alerts.Loading);
         lookupResults(inputText, resetErrorState);
+    };
+
+    const clearInput = () => {
+        setInputText("");
+        setAlerts(Alerts.None);
+        setDropdownIsVisible(false);
+        setSelectedItemInternal(undefined);
     };
 
     // close dropdowns if user clicks outside select component
@@ -161,40 +171,47 @@ const SingleSelect = <T extends IIdName>({
     return (
         <div className="relative w-full" ref={containerRef}>
             {/* Input Element */}
-            <form onSubmit={handleFormSubmit}>
+            <form>
                 <LabelWrapper
                     wrapperClassName={wrapperClassName + " flex"}
                     labelClassName={labelClassName + " flex"}
                     label={label}
                     inputWrapperClassName={"flex flex-col"}
                 >
-                    <div className="flex gap-1 flex-wrap pt-1">
-                        <div className="inline-flex">
-                            <div className="h-5 w-5 mx-2">
-                                {alerts === Alerts.Loading ? (
-                                    <Spinner className="h-full w-full mt-1" />
-                                ) : (
-                                    <button
-                                        type="submit"
-                                        className="rounded text-lg"
-                                    >
-                                        &#x1F50E;
-                                    </button>
-                                )}
-                            </div>
-                            <input
-                                ref={inputRef}
-                                className="py-1 bg-transparent border-none focus:outline-none grow"
-                                type="text"
-                                value={inputText}
-                                onChange={(e) => {
-                                    setInputText(e.target.value);
-                                    handleInputChange(e);
-                                }}
-                                {...htmlTextInputProps}
-                                onKeyDown={handleKeyDownOnInput}
-                            />
+                    <div className="flex gap-1 pt-1">
+                        <div className="h-5 w-5 mx-2">
+                            {alerts === Alerts.Loading ? (
+                                <Spinner className="h-full w-full mt-1" />
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={handleFormSubmit}
+                                    className="rounded text-lg"
+                                >
+                                    &#x1F50E;
+                                </button>
+                            )}
                         </div>
+                        <input
+                            ref={inputRef}
+                            className="py-1 bg-transparent border-none focus:outline-none grow"
+                            type="text"
+                            value={inputText}
+                            onChange={(e) => {
+                                setInputText(e.target.value);
+                                handleInputChange(e);
+                            }}
+                            {...htmlTextInputProps}
+                            onKeyDown={handleKeyDownOnInput}
+                        />
+
+                        <button
+                            type="button"
+                            onClick={clearInput}
+                            className="opacity-50 hover:opacity-100 text-xl px-2 rounded-full hover:bg-black/10"
+                        >
+                            &times;
+                        </button>
                     </div>
                 </LabelWrapper>
             </form>
