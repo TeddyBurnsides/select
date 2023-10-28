@@ -4,8 +4,8 @@ import debounce from "../utils/debounce";
 import LabelWrapper from "./LabelWrapper";
 import Spinner from "./Spinner";
 
-enum Alerts {
-    None = 1,
+enum FieldState {
+    Default = 1,
     Loading = 2,
     NoResultsFound = 3,
 }
@@ -17,6 +17,7 @@ interface Props<T> extends React.InputHTMLAttributes<HTMLInputElement> {
     onItemSelect: (selectedItem: T) => void;
     onItemRemove: (item: IIdName) => void;
     label?: string;
+    // Tailwind CSS
     wrapperClassName?: string;
     labelClassName?: string;
     inputWrapperClassName?: string;
@@ -35,11 +36,10 @@ const SingleSelect = <T extends IIdName>({
     ...htmlTextInputProps
 }: Props<T>) => {
     const [lookupFunctionResults, setLookupFunctionResults] = useState<T[]>([]);
-    const [selectedItemInternal, setSelectedItemInternal] = useState<
-        T | undefined
-    >(selectedItem);
-    const [alerts, setAlerts] = useState<Alerts>(Alerts.None);
-    const [inputText, setInputText] = useState("");
+    const [fieldState, setFieldState] = useState<FieldState>(
+        FieldState.Default
+    );
+    const [inputText, setInputText] = useState(selectedItem?.name ?? "");
     const [dropdownIsVisible, setDropdownIsVisible] = useState(false);
 
     const containerRef = useRef<HTMLDivElement>(null);
@@ -52,12 +52,12 @@ const SingleSelect = <T extends IIdName>({
             lookupFunction(searchString).then((apiResponse) => {
                 // dopm't show selected results in list of searched-for items
                 const filteredArray = apiResponse.filter(
-                    (item) => selectedItemInternal?.name !== item.name
+                    (item) => selectedItem?.name !== item.name
                 );
                 setLookupFunctionResults(filteredArray);
                 callback(); // reset loading state
                 if (filteredArray.length === 0) {
-                    setAlerts(Alerts.NoResultsFound);
+                    setFieldState(FieldState.NoResultsFound);
                 } else {
                     resetErrorState();
                 }
@@ -76,7 +76,7 @@ const SingleSelect = <T extends IIdName>({
                 (x) => x.id !== selectedItem.id
             );
             if (filteredResults.length === 0) {
-                setAlerts(Alerts.NoResultsFound);
+                setFieldState(FieldState.NoResultsFound);
             }
             return filteredResults;
         });
@@ -86,23 +86,20 @@ const SingleSelect = <T extends IIdName>({
         inputRef.current?.select();
 
         setInputText(selectedItem.name);
-    };
 
-    // update internal results list with the passed in prop
-    useEffect(() => {
-        setSelectedItemInternal(selectedItem);
-    }, [selectedItem]);
+        setDropdownIsVisible(false);
+    };
 
     // callback to reset loading state
     const resetErrorState = () => {
-        setAlerts(Alerts.None);
+        setFieldState(FieldState.Default);
     };
 
     const handleInputChange = debounce(
         (e: React.ChangeEvent<HTMLInputElement>) => {
             const searchString = e.target.value;
             setDropdownIsVisible(true);
-            setAlerts(Alerts.Loading);
+            setFieldState(FieldState.Loading);
             // setInputText(searchString); // used for form submit
             lookupResults(searchString, resetErrorState);
         },
@@ -136,20 +133,13 @@ const SingleSelect = <T extends IIdName>({
         }
     };
 
-    const handleFormSubmit = (
-        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-    ) => {
-        e.preventDefault();
-        setDropdownIsVisible(true);
-        setAlerts(Alerts.Loading);
-        lookupResults(inputText, resetErrorState);
-    };
-
     const clearInput = () => {
         setInputText("");
-        setAlerts(Alerts.None);
+        setFieldState(FieldState.Default);
         setDropdownIsVisible(false);
-        setSelectedItemInternal(undefined);
+        if (selectedItem) {
+            onItemRemove(selectedItem);
+        }
     };
 
     // close dropdowns if user clicks outside select component
@@ -161,12 +151,20 @@ const SingleSelect = <T extends IIdName>({
             ) {
                 setDropdownIsVisible(false);
             }
+
+            if (!selectedItem && inputText !== "") {
+                setInputText("");
+            }
+
+            if (selectedItem && selectedItem.name !== inputText) {
+                setInputText(selectedItem.name);
+            }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, []);
+    }, [inputText, selectedItem]);
 
     return (
         <div className="relative w-full" ref={containerRef}>
@@ -179,7 +177,7 @@ const SingleSelect = <T extends IIdName>({
                     inputWrapperClassName={"flex flex-col"}
                 >
                     <div className="flex gap-1 pt-1">
-                        <div className="h-5 w-5 mx-2">
+                        {/* <div className="h-5 w-5 mx-2">
                             {alerts === Alerts.Loading ? (
                                 <Spinner className="h-full w-full mt-1" />
                             ) : (
@@ -191,7 +189,7 @@ const SingleSelect = <T extends IIdName>({
                                     &#x1F50E;
                                 </button>
                             )}
-                        </div>
+                        </div> */}
                         <input
                             ref={inputRef}
                             className="py-1 bg-transparent border-none focus:outline-none grow"
@@ -204,14 +202,20 @@ const SingleSelect = <T extends IIdName>({
                             {...htmlTextInputProps}
                             onKeyDown={handleKeyDownOnInput}
                         />
-
-                        <button
-                            type="button"
-                            onClick={clearInput}
-                            className="opacity-50 hover:opacity-100 text-xl px-2 rounded-full hover:bg-black/10"
-                        >
-                            &times;
-                        </button>
+                        <div className="h-5 w-5 mx-2">
+                            {fieldState === FieldState.Loading ? (
+                                <Spinner className="h-full w-full mt-1" />
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={clearInput}
+                                    disabled={inputText === ""}
+                                    className="disabled:cursor-default opacity-50 hover:opacity-100 disabled:hover:opacity-50 text-xl px-2 rounded-full hover:bg-black/10 disabled:hover:bg-transparent"
+                                >
+                                    &times;
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </LabelWrapper>
             </form>
@@ -219,7 +223,7 @@ const SingleSelect = <T extends IIdName>({
             {/* Dropdown of search results */}
             {lookupFunctionResults &&
                 lookupFunctionResults.length > 0 &&
-                alerts !== Alerts.Loading &&
+                fieldState !== FieldState.Loading &&
                 dropdownIsVisible && (
                     <div
                         ref={dropdownRef}
@@ -239,7 +243,7 @@ const SingleSelect = <T extends IIdName>({
                 )}
 
             {/* No results found */}
-            {dropdownIsVisible && alerts === Alerts.NoResultsFound && (
+            {dropdownIsVisible && fieldState === FieldState.NoResultsFound && (
                 <div className="z-50 mt-1 py-3 text-slate-800 text-center italic bg-white shadow border border-slate-300 rounded absolute w-full">
                     {"No results found for '" + inputText + "'"}
                 </div>

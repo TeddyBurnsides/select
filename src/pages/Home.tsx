@@ -52,7 +52,7 @@ const Home = () => {
                     onItemSelect={addItem}
                     selectedItems={selectedItems}
                     lookupFunction={fakeApiCall}
-                    label="Search for fruit"
+                    label="Select fruits"
                     debounceInMilliseconds={600}
                     placeholder="Search..."
                 />
@@ -63,7 +63,7 @@ const Home = () => {
                     onItemSelect={addItemSingle}
                     selectedItem={selectedItem}
                     lookupFunction={fakeApiCall}
-                    label="Search for fruit"
+                    label="Select a fruit"
                     debounceInMilliseconds={600}
                     placeholder="Search..."
                 />

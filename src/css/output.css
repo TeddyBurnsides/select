@@ -1151,6 +1151,18 @@ body {
   outline-color: rgb(0 0 0 / 0.2);
 }
 
+.disabled\:cursor-default:disabled {
+  cursor: default;
+}
+
+.disabled\:hover\:bg-transparent:hover:disabled {
+  background-color: transparent;
+}
+
+.disabled\:hover\:opacity-50:hover:disabled {
+  opacity: 0.5;
+}
+
 @media (prefers-color-scheme: dark) {
   .dark\:text-gray-600 {
     --tw-text-opacity: 1;
