@@ -73,12 +73,12 @@ const SingleSelect = <T extends IIdName>({
                 if (apiResponse.length === 0) {
                     setFieldState(FieldState.NoResultsFound);
                 } else {
-                    resetErrorState();
+                    setFieldState(FieldState.Default);
                 }
             });
         } else {
             setLookupFunctionResults([]);
-            resetErrorState();
+            setFieldState(FieldState.Default);
         }
     };
 
@@ -151,26 +151,26 @@ const SingleSelect = <T extends IIdName>({
         setLookupFunctionResults([]);
     };
 
-    // if user clicks outside select component
     useEffect(() => {
         const handleClickOutside = (event: any) => {
-            // close dropdown
+            // if user clicks outside select component
             if (
                 containerRef.current &&
                 !containerRef.current.contains(event.target)
             ) {
+                // close dropdown
                 setLookupFunctionResults([]);
                 setFieldState(FieldState.Default);
-            }
 
-            // if nothing was selected but text was entered clear text
-            if (!selectedItem && inputText !== "") {
-                setInputText("");
-            }
+                // if nothing was selected but text was entered clear text
+                if (!selectedItem && inputText !== "") {
+                    setInputText("");
+                }
 
-            // if something was previously selected but the input was changed, reset to the selected text
-            if (selectedItem && selectedItem.name !== inputText) {
-                setInputText(selectedItem.name);
+                // if something was previously selected but the input was changed, reset to the selected text
+                if (selectedItem && selectedItem.name !== inputText) {
+                    setInputText(selectedItem.name);
+                }
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
@@ -187,6 +187,7 @@ const SingleSelect = <T extends IIdName>({
                 labelClassName={labelClassName + " flex"}
                 label={label}
                 inputWrapperClassName={"flex flex-col"}
+                required={htmlTextInputProps.required}
             >
                 <div className="flex gap-1 pt-1">
                     <input
@@ -200,7 +201,9 @@ const SingleSelect = <T extends IIdName>({
                                 clearField();
                             }
                             if (lookupFunction) {
-                                setFieldState(FieldState.Loading);
+                                if (e.target.value !== "") {
+                                    setFieldState(FieldState.Loading);
+                                }
                                 debouncedResultsLookup(e);
                             } else if (items) {
                                 resultsLookup(e);

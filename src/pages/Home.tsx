@@ -61,6 +61,7 @@ const Home = () => {
                     label="Select a fruit"
                     debounceInMilliseconds={600}
                     placeholder="Search..."
+                    required
                 />
             </ComponentLabel>
             <ComponentLabel label="Text Input">

@@ -21,6 +21,7 @@ const DateInput = ({
             labelClassName={labelClassName + " flex"}
             inputWrapperClassName={inputWrapperClassName + " inline-flex"}
             label={label}
+            required={htmlInputProps.required}
         >
             <input
                 type={"date"}

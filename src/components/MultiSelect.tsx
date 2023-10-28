@@ -5,7 +5,7 @@ import LabelWrapper from "./LabelWrapper";
 import Pill from "./Pill";
 import Spinner from "./Spinner";
 
-enum Alerts {
+enum FieldState {
     None = 1,
     Loading = 2,
     NoResultsFound = 3,
@@ -21,6 +21,7 @@ interface Props<T> extends React.InputHTMLAttributes<HTMLInputElement> {
     wrapperClassName?: string;
     labelClassName?: string;
     inputWrapperClassName?: string;
+    required?: boolean;
 }
 
 const MultiSelect = <T extends IIdName>({
@@ -38,9 +39,8 @@ const MultiSelect = <T extends IIdName>({
     const [lookupFunctionResults, setLookupFunctionResults] = useState<T[]>([]);
     const [selectedItemsInternal, setSelectedItemsInternal] =
         useState<T[]>(selectedItems);
-    const [alerts, setAlerts] = useState<Alerts>(Alerts.None);
+    const [fieldState, setFieldState] = useState<FieldState>(FieldState.None);
     const [inputText, setInputText] = useState("");
-    const [dropdownIsVisible, setDropdownIsVisible] = useState(false);
 
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -59,7 +59,7 @@ const MultiSelect = <T extends IIdName>({
                 setLookupFunctionResults(filteredArray);
                 callback(); // reset loading state
                 if (filteredArray.length === 0) {
-                    setAlerts(Alerts.NoResultsFound);
+                    setFieldState(FieldState.NoResultsFound);
                 } else {
                     resetErrorState();
                 }
@@ -78,7 +78,7 @@ const MultiSelect = <T extends IIdName>({
                 (x) => x.id !== selectedItem.id
             );
             if (filteredResults.length === 0) {
-                setAlerts(Alerts.NoResultsFound);
+                setFieldState(FieldState.NoResultsFound);
             }
             return filteredResults;
         });
@@ -95,14 +95,13 @@ const MultiSelect = <T extends IIdName>({
 
     // callback to reset loading state
     const resetErrorState = () => {
-        setAlerts(Alerts.None);
+        setFieldState(FieldState.None);
     };
 
     const handleInputChange = debounce(
         (e: React.ChangeEvent<HTMLInputElement>) => {
             const searchString = e.target.value;
-            setDropdownIsVisible(true);
-            setAlerts(Alerts.Loading);
+            setFieldState(FieldState.Loading);
             setInputText(searchString); // used for form submit
             lookupResults(searchString, resetErrorState);
         },
@@ -137,8 +136,7 @@ const MultiSelect = <T extends IIdName>({
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setDropdownIsVisible(true);
-        setAlerts(Alerts.Loading);
+        setFieldState(FieldState.Loading);
         lookupResults(inputText, resetErrorState);
     };
 
@@ -149,7 +147,7 @@ const MultiSelect = <T extends IIdName>({
                 containerRef.current &&
                 !containerRef.current.contains(event.target)
             ) {
-                setDropdownIsVisible(false);
+                setLookupFunctionResults([]);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
@@ -167,6 +165,7 @@ const MultiSelect = <T extends IIdName>({
                     labelClassName={labelClassName + " flex"}
                     label={label}
                     inputWrapperClassName={"flex flex-col"}
+                    required={htmlTextInputProps.required}
                 >
                     <div className="flex gap-1 flex-wrap pt-1">
                         {selectedItems.map((x) => (
@@ -174,7 +173,7 @@ const MultiSelect = <T extends IIdName>({
                         ))}
                         <div className="inline-flex">
                             <div className="h-5 w-5 mx-2">
-                                {alerts === Alerts.Loading ? (
+                                {fieldState === FieldState.Loading ? (
                                     <Spinner className="h-full w-full mt-1" />
                                 ) : (
                                     <button
@@ -201,8 +200,7 @@ const MultiSelect = <T extends IIdName>({
             {/* Dropdown of search results */}
             {lookupFunctionResults &&
                 lookupFunctionResults.length > 0 &&
-                alerts !== Alerts.Loading &&
-                dropdownIsVisible && (
+                fieldState !== FieldState.Loading && (
                     <div
                         ref={dropdownRef}
                         className={`z-50 max-h-64 overflow-y-scroll mt-1 py-1 bg-white shadow border border-slate-300 rounded absolute w-full`}
@@ -221,7 +219,7 @@ const MultiSelect = <T extends IIdName>({
                 )}
 
             {/* No results found */}
-            {dropdownIsVisible && alerts === Alerts.NoResultsFound && (
+            {fieldState === FieldState.NoResultsFound && (
                 <div className="z-50 mt-1 py-3 text-slate-800 text-center italic bg-white shadow border border-slate-300 rounded absolute w-full">
                     {"No results found for '" + inputText + "'"}
                 </div>

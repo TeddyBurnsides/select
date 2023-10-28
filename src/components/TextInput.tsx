@@ -21,6 +21,7 @@ const TextInput = ({
             labelClassName={labelClassName + " flex"}
             inputWrapperClassName={inputWrapperClassName}
             label={label}
+            required={htmlInputProps.required}
         >
             <input
                 type={htmlInputProps.type ?? "text"}

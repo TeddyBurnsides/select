@@ -6,6 +6,7 @@ interface Props {
     wrapperClassName?: string;
     labelClassName?: string;
     inputWrapperClassName?: string;
+    required?: boolean;
 }
 
 const LabelWrapper = ({
@@ -14,6 +15,7 @@ const LabelWrapper = ({
     wrapperClassName,
     labelClassName,
     inputWrapperClassName,
+    required,
 }: Props) => {
     return (
         <label
@@ -23,8 +25,16 @@ const LabelWrapper = ({
             )}
         >
             {label && (
-                <div className={twMerge(labelClassName, "text-sm opacity-70")}>
+                <div
+                    className={twMerge(
+                        labelClassName,
+                        "flex text-sm opacity-70"
+                    )}
+                >
                     {label}
+                    {required && (
+                        <div className="text-red-500 font-bold">*</div>
+                    )}
                 </div>
             )}
             <div className={inputWrapperClassName}>{children}</div>
