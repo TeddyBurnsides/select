@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import IIdName from "../types/IIdName";
 import debounce from "../utils/debounce";
 import LabelWrapper from "./LabelWrapper";
-import Pill from "./Pill";
 import Spinner from "./Spinner";
 
 enum Alerts {
@@ -85,6 +84,8 @@ const SingleSelect = <T extends IIdName>({
         onItemSelect(selectedItem);
         // highlight the text in the input
         inputRef.current?.select();
+
+        setInputText(selectedItem.name);
     };
 
     // update internal results list with the passed in prop
@@ -102,7 +103,7 @@ const SingleSelect = <T extends IIdName>({
             const searchString = e.target.value;
             setDropdownIsVisible(true);
             setAlerts(Alerts.Loading);
-            setInputText(searchString); // used for form submit
+            // setInputText(searchString); // used for form submit
             lookupResults(searchString, resetErrorState);
         },
         debounceInMilliseconds
@@ -168,32 +169,32 @@ const SingleSelect = <T extends IIdName>({
                     inputWrapperClassName={"flex flex-col"}
                 >
                     <div className="flex gap-1 flex-wrap pt-1">
-                        {selectedItem ? (
-                            <Pill item={selectedItem} onDelete={onItemRemove} />
-                        ) : (
-                            <div className="inline-flex">
-                                <div className="h-5 w-5 mx-2">
-                                    {alerts === Alerts.Loading ? (
-                                        <Spinner className="h-full w-full mt-1" />
-                                    ) : (
-                                        <button
-                                            type="submit"
-                                            className="rounded text-lg"
-                                        >
-                                            &#x1F50E;
-                                        </button>
-                                    )}
-                                </div>
-                                <input
-                                    ref={inputRef}
-                                    className="py-1 bg-transparent border-none focus:outline-none grow"
-                                    type="text"
-                                    onChange={handleInputChange}
-                                    {...htmlTextInputProps}
-                                    onKeyDown={handleKeyDownOnInput}
-                                />
+                        <div className="inline-flex">
+                            <div className="h-5 w-5 mx-2">
+                                {alerts === Alerts.Loading ? (
+                                    <Spinner className="h-full w-full mt-1" />
+                                ) : (
+                                    <button
+                                        type="submit"
+                                        className="rounded text-lg"
+                                    >
+                                        &#x1F50E;
+                                    </button>
+                                )}
                             </div>
-                        )}
+                            <input
+                                ref={inputRef}
+                                className="py-1 bg-transparent border-none focus:outline-none grow"
+                                type="text"
+                                value={inputText}
+                                onChange={(e) => {
+                                    setInputText(e.target.value);
+                                    handleInputChange(e);
+                                }}
+                                {...htmlTextInputProps}
+                                onKeyDown={handleKeyDownOnInput}
+                            />
+                        </div>
                     </div>
                 </LabelWrapper>
             </form>
