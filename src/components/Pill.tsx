@@ -11,20 +11,20 @@ const Pill = ({ item, onDelete, className }: Props) => {
     return (
         <div
             className={twMerge(
-                "flex space-x-2 items-center rounded bg-blue-500/90 text-white px-2 py-1 text-sm",
+                "flex space-x-1 items-center rounded bg-blue-500/10 text-blue-800/70 px-2 py-1 text-sm",
                 className
             )}
         >
-            <div className="truncate max-w-[12rem]">{item.name}</div>
+            <div className="truncate">{item.name}</div>
             <button
                 onClick={(e) => {
                     e.preventDefault();
                     onDelete(item);
                 }}
                 type="button"
-                className="rounded-full px-1 hover:bg-white/30"
+                className="rounded-full text-lg px-1 h-5 hover:bg-blue-500/30"
             >
-                ✖
+                <span className="relative -top-1">&times;</span>
             </button>
         </div>
     );
