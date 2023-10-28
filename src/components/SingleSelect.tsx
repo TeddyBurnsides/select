@@ -13,7 +13,7 @@ enum FieldState {
 interface Props<T> extends React.InputHTMLAttributes<HTMLInputElement> {
     selectedItem: T | null;
     lookupFunction?: (searchString: string) => Promise<T[]>;
-    items?: IIdName[];
+    items?: T[];
     debounceInMilliseconds?: number;
     onUpdate: (item: T | null) => void;
     label?: string;
@@ -45,8 +45,27 @@ const SingleSelect = <T extends IIdName>({
     const inputRef = useRef<HTMLInputElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
+    const resultsLookup = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const stringToFilterOn = e.target.value;
+        const results = items?.filter(
+            (x) =>
+                x.name
+                    .toLowerCase()
+                    .includes(stringToFilterOn.toLocaleLowerCase()) ||
+                x.id === Number(stringToFilterOn)
+        );
+        if (results && results?.length > 0) {
+            setLookupFunctionResults(results);
+        } else {
+            setFieldState(FieldState.NoResultsFound);
+        }
+    };
+
     // lookup results with the provided looked function from props
-    const lookupResults = (searchString: string, callback: () => void) => {
+    const lookupResultsWithFunction = (
+        searchString: string,
+        callback: () => void
+    ) => {
         if (searchString && lookupFunction) {
             lookupFunction(searchString).then((apiResponse) => {
                 setLookupFunctionResults(apiResponse);
@@ -90,10 +109,9 @@ const SingleSelect = <T extends IIdName>({
         setFieldState(FieldState.Default);
     };
 
-    const handleInputChange = debounce(
+    const debouncedResultsLookup = debounce(
         (e: React.ChangeEvent<HTMLInputElement>) => {
-            setFieldState(FieldState.Loading);
-            lookupResults(e.target.value, resetErrorState);
+            lookupResultsWithFunction(e.target.value, resetErrorState);
         },
         debounceInMilliseconds
     );
@@ -129,9 +147,7 @@ const SingleSelect = <T extends IIdName>({
     const clearField = () => {
         setInputText("");
         setFieldState(FieldState.Default);
-        if (selectedItem) {
-            onUpdate(null);
-        }
+        onUpdate(null);
         setLookupFunctionResults([]);
     };
 
@@ -183,23 +199,34 @@ const SingleSelect = <T extends IIdName>({
                             if (e.target.value === "") {
                                 clearField();
                             }
-                            handleInputChange(e);
+                            if (lookupFunction) {
+                                setFieldState(FieldState.Loading);
+                                debouncedResultsLookup(e);
+                            } else if (items) {
+                                resultsLookup(e);
+                            }
                         }}
                         {...htmlTextInputProps}
+                        onClick={() => {
+                            if (items) {
+                                setLookupFunctionResults(items);
+                            }
+                        }}
                         onKeyDown={handleKeyDownOnInput}
                     />
                     <div className="h-5 w-5 mx-2">
                         {fieldState === FieldState.Loading ? (
                             <Spinner className="h-full w-full mt-1" />
                         ) : (
-                            <button
-                                type="button"
-                                onClick={clearField}
-                                disabled={inputText === ""}
-                                className="disabled:cursor-default opacity-50 hover:opacity-100 disabled:hover:opacity-50 text-xl px-2 rounded-full hover:bg-black/10 disabled:hover:bg-transparent"
-                            >
-                                &times;
-                            </button>
+                            inputText !== "" && (
+                                <button
+                                    type="button"
+                                    onClick={clearField}
+                                    className="disabled:cursor-default opacity-50 hover:opacity-100 disabled:hover:opacity-50 text-xl px-2 rounded-full hover:bg-black/10 disabled:hover:bg-transparent"
+                                >
+                                    &times;
+                                </button>
+                            )
                         )}
                     </div>
                 </div>
