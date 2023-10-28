@@ -8,7 +8,6 @@ import ColorPicker from "../components/ColorPicker";
 import { IColor } from "../types/IColor";
 import { Colors } from "../constants/Colors";
 import DateInput from "../components/DateInput";
-import Spinner from "../components/Spinner";
 import ComponentLabel from "./ComponentLabel";
 import SingleSelect from "../components/SingleSelect";
 
@@ -28,6 +27,20 @@ const Home = () => {
 
     const removeItem = (item: IIdName) => {
         setSelectedItems((prev) => [...prev.filter((x) => x.id !== item.id)]);
+    };
+
+    // single select api helpers
+
+    const [selectedItemApi, setSelectedItemApi] = useState<IIdName | undefined>(
+        fakeData[7]
+    );
+
+    const addItemSingleApi = (newItem: IIdName) => {
+        setSelectedItemApi(newItem);
+    };
+
+    const removeItemSingleApi = (item: IIdName) => {
+        setSelectedItemApi(undefined);
     };
 
     // single select helpers
@@ -57,12 +70,23 @@ const Home = () => {
                     placeholder="Search..."
                 />
             </ComponentLabel>
+            <ComponentLabel label="Single-Select API">
+                <SingleSelect
+                    onItemRemove={removeItemSingleApi}
+                    onItemSelect={addItemSingleApi}
+                    selectedItem={selectedItemApi}
+                    lookupFunction={fakeApiCall}
+                    label="Select a fruit from our database"
+                    debounceInMilliseconds={600}
+                    placeholder="Search..."
+                />
+            </ComponentLabel>
             <ComponentLabel label="Single-Select">
                 <SingleSelect
                     onItemRemove={removeItemSingle}
                     onItemSelect={addItemSingle}
                     selectedItem={selectedItem}
-                    lookupFunction={fakeApiCall}
+                    items={fakeData}
                     label="Select a fruit"
                     debounceInMilliseconds={600}
                     placeholder="Search..."
@@ -83,9 +107,6 @@ const Home = () => {
                     colors={Colors}
                     selectedColor={color}
                 />
-            </ComponentLabel>
-            <ComponentLabel label="Spinner">
-                <Spinner />
             </ComponentLabel>
         </div>
     );
