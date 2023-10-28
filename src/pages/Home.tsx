@@ -13,7 +13,6 @@ import SingleSelect from "../components/SingleSelect";
 
 const Home = () => {
     const [multiSelectApiItems, setMultiSelectApiItems] = useState<IIdName[]>([
-        fakeData[5],
         fakeData[4],
         fakeData[3],
         fakeData[2],

@@ -18,14 +18,14 @@ const LabelWrapper = ({
     required,
 }: Props) => {
     return (
-        <label
+        <div
             className={twMerge(
                 "inline-flex relative flex-col bg-white border border-slate-300 focus-within:border-blue-500 focus-within:outline focus-within:outline-slate-200 focus-within:outline-3 shadow rounded py-2 pl-2 pr-2 ",
                 wrapperClassName
             )}
         >
             {label && (
-                <div
+                <label
                     className={twMerge(
                         labelClassName,
                         "flex text-sm opacity-70"
@@ -35,10 +35,10 @@ const LabelWrapper = ({
                     {required && (
                         <div className="text-red-500 font-bold">*</div>
                     )}
-                </div>
+                </label>
             )}
             <div className={inputWrapperClassName}>{children}</div>
-        </label>
+        </div>
     );
 };
 
