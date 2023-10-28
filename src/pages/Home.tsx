@@ -16,6 +16,8 @@ const Home = () => {
         fakeData[5],
         fakeData[4],
         fakeData[3],
+        fakeData[2],
+        fakeData[1],
     ]);
     const [color, setColor] = useState<IColor>();
     const [singleSelectApiItem, setSingleSelectApiItem] =

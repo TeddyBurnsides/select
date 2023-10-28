@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 body {
-	font: 12pt Arial;
+	font: 11pt "Open Sans", Arial;
 }

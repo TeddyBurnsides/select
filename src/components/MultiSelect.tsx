@@ -134,68 +134,63 @@ const MultiSelect = <T extends IIdName>({
         }
     };
 
-    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setFieldState(FieldState.Loading);
-        lookupResults(inputText, resetErrorState);
-    };
-
     // close dropdowns if user clicks outside select component
     useEffect(() => {
         const handleClickOutside = (event: any) => {
+            // if user clicks outside select component
             if (
                 containerRef.current &&
                 !containerRef.current.contains(event.target)
             ) {
+                // close dropdown
                 setLookupFunctionResults([]);
+                setFieldState(FieldState.None);
+
+                // if nothing was selected but text was entered clear text
+                if (
+                    (!selectedItems || selectedItems.length === 0) &&
+                    inputText !== ""
+                ) {
+                    setInputText("");
+                }
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, []);
+    }, [inputText, selectedItems]);
 
     return (
         <div className="relative w-full" ref={containerRef}>
             {/* Input Element */}
-            <form onSubmit={handleFormSubmit}>
-                <LabelWrapper
-                    wrapperClassName={wrapperClassName + " flex"}
-                    labelClassName={labelClassName + " flex"}
-                    label={label}
-                    inputWrapperClassName={"flex flex-col"}
-                    required={htmlTextInputProps.required}
-                >
-                    <div className="flex gap-1 flex-wrap pt-1">
-                        {selectedItems.map((x) => (
-                            <Pill key={x.id} item={x} onDelete={onItemRemove} />
-                        ))}
-                        <div className="inline-flex">
-                            <div className="h-5 w-5 mx-2">
-                                {fieldState === FieldState.Loading ? (
-                                    <Spinner className="h-full w-full mt-1" />
-                                ) : (
-                                    <button
-                                        type="submit"
-                                        className="rounded text-lg"
-                                    >
-                                        &#x1F50E;
-                                    </button>
-                                )}
-                            </div>
-                            <input
-                                ref={inputRef}
-                                className="py-1 bg-transparent border-none focus:outline-none grow"
-                                type="text"
-                                onChange={handleInputChange}
-                                {...htmlTextInputProps}
-                                onKeyDown={handleKeyDownOnInput}
-                            />
-                        </div>
+            <LabelWrapper
+                wrapperClassName={wrapperClassName + " flex"}
+                labelClassName={labelClassName + " flex"}
+                label={label}
+                inputWrapperClassName={"flex flex-col"}
+                required={htmlTextInputProps.required}
+            >
+                <div className="flex gap-1 flex-wrap pt-1">
+                    {selectedItems.map((x) => (
+                        <Pill key={x.id} item={x} onDelete={onItemRemove} />
+                    ))}
+                    <div className="flex">
+                        <input
+                            ref={inputRef}
+                            className="min-w-10 py-1 pl-1 bg-transparent border-none focus:outline-none grow"
+                            type="text"
+                            onChange={handleInputChange}
+                            {...htmlTextInputProps}
+                            onKeyDown={handleKeyDownOnInput}
+                        />
+
+                        {fieldState === FieldState.Loading && (
+                            <Spinner className="h-5 w-5" />
+                        )}
                     </div>
-                </LabelWrapper>
-            </form>
+                </div>
+            </LabelWrapper>
 
             {/* Dropdown of search results */}
             {lookupFunctionResults &&
