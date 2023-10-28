@@ -11,12 +11,11 @@ enum FieldState {
 }
 
 interface Props<T> extends React.InputHTMLAttributes<HTMLInputElement> {
-    selectedItem?: T;
+    selectedItem: T | null;
     lookupFunction?: (searchString: string) => Promise<T[]>;
     items?: IIdName[];
     debounceInMilliseconds?: number;
-    onItemSelect: (selectedItem: T) => void;
-    onItemRemove: (item: IIdName) => void;
+    onUpdate: (item: T | null) => void;
     label?: string;
     // Tailwind CSS
     wrapperClassName?: string;
@@ -30,8 +29,7 @@ const SingleSelect = <T extends IIdName>({
     items,
     debounceInMilliseconds = 300,
     label,
-    onItemRemove,
-    onItemSelect,
+    onUpdate,
     wrapperClassName,
     labelClassName,
     inputWrapperClassName,
@@ -42,7 +40,6 @@ const SingleSelect = <T extends IIdName>({
         FieldState.Default
     );
     const [inputText, setInputText] = useState(selectedItem?.name ?? "");
-    const [dropdownIsVisible, setDropdownIsVisible] = useState(false);
 
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -79,13 +76,13 @@ const SingleSelect = <T extends IIdName>({
             return filteredResults;
         });
         // call function to let parent component know
-        onItemSelect(selectedItem);
+        onUpdate(selectedItem);
         // highlight the text in the input
         inputRef.current?.select();
 
         setInputText(selectedItem.name);
 
-        setDropdownIsVisible(false);
+        setLookupFunctionResults([]);
     };
 
     // callback to reset loading state
@@ -95,7 +92,6 @@ const SingleSelect = <T extends IIdName>({
 
     const handleInputChange = debounce(
         (e: React.ChangeEvent<HTMLInputElement>) => {
-            setDropdownIsVisible(true);
             setFieldState(FieldState.Loading);
             lookupResults(e.target.value, resetErrorState);
         },
@@ -124,31 +120,39 @@ const SingleSelect = <T extends IIdName>({
             e.currentTarget.previousSibling &&
                 (e.currentTarget.previousSibling as HTMLButtonElement).focus();
         }
-    };
-
-    const clearInput = () => {
-        setInputText("");
-        setFieldState(FieldState.Default);
-        setDropdownIsVisible(false);
-        if (selectedItem) {
-            onItemRemove(selectedItem);
+        if (e.key === "Escape") {
+            setLookupFunctionResults([]);
+            setFieldState(FieldState.Default);
         }
     };
 
-    // close dropdowns if user clicks outside select component
+    const clearField = () => {
+        setInputText("");
+        setFieldState(FieldState.Default);
+        if (selectedItem) {
+            onUpdate(null);
+        }
+        setLookupFunctionResults([]);
+    };
+
+    // if user clicks outside select component
     useEffect(() => {
         const handleClickOutside = (event: any) => {
+            // close dropdown
             if (
                 containerRef.current &&
                 !containerRef.current.contains(event.target)
             ) {
-                setDropdownIsVisible(false);
+                setLookupFunctionResults([]);
+                setFieldState(FieldState.Default);
             }
 
+            // if nothing was selected but text was entered clear text
             if (!selectedItem && inputText !== "") {
                 setInputText("");
             }
 
+            // if something was previously selected but the input was changed, reset to the selected text
             if (selectedItem && selectedItem.name !== inputText) {
                 setInputText(selectedItem.name);
             }
@@ -176,11 +180,13 @@ const SingleSelect = <T extends IIdName>({
                         value={inputText}
                         onChange={(e) => {
                             setInputText(e.target.value);
+                            if (e.target.value === "") {
+                                clearField();
+                            }
                             handleInputChange(e);
                         }}
                         {...htmlTextInputProps}
                         onKeyDown={handleKeyDownOnInput}
-                        onClick={() => setDropdownIsVisible(true)}
                     />
                     <div className="h-5 w-5 mx-2">
                         {fieldState === FieldState.Loading ? (
@@ -188,7 +194,7 @@ const SingleSelect = <T extends IIdName>({
                         ) : (
                             <button
                                 type="button"
-                                onClick={clearInput}
+                                onClick={clearField}
                                 disabled={inputText === ""}
                                 className="disabled:cursor-default opacity-50 hover:opacity-100 disabled:hover:opacity-50 text-xl px-2 rounded-full hover:bg-black/10 disabled:hover:bg-transparent"
                             >
@@ -202,8 +208,7 @@ const SingleSelect = <T extends IIdName>({
             {/* Dropdown of search results */}
             {lookupFunctionResults &&
                 lookupFunctionResults.length > 0 &&
-                fieldState !== FieldState.Loading &&
-                dropdownIsVisible && (
+                fieldState !== FieldState.Loading && (
                     <div
                         ref={dropdownRef}
                         className={`z-50 max-h-64 overflow-y-scroll mt-1 py-1 bg-white shadow border border-slate-300 rounded absolute w-full`}
@@ -229,7 +234,7 @@ const SingleSelect = <T extends IIdName>({
                 )}
 
             {/* No results found */}
-            {dropdownIsVisible && fieldState === FieldState.NoResultsFound && (
+            {fieldState === FieldState.NoResultsFound && (
                 <div className="z-50 mt-1 py-3 text-slate-800 text-center italic bg-white shadow border border-slate-300 rounded absolute w-full">
                     {"No results found for '" + inputText + "'"}
                 </div>

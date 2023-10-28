@@ -12,57 +12,38 @@ import ComponentLabel from "./ComponentLabel";
 import SingleSelect from "../components/SingleSelect";
 
 const Home = () => {
-    // multi-select helpers
-
+    // multi-select state
     const [selectedItems, setSelectedItems] = useState<IIdName[]>([
         fakeData[5],
         fakeData[4],
         fakeData[3],
     ]);
+
+    // color picker state
     const [color, setColor] = useState<IColor>();
 
-    const addItem = (newItem: IIdName) => {
-        setSelectedItems((prev) => [...prev, newItem]);
-    };
-
-    const removeItem = (item: IIdName) => {
-        setSelectedItems((prev) => [...prev.filter((x) => x.id !== item.id)]);
-    };
-
-    // single select api helpers
-
-    const [selectedItemApi, setSelectedItemApi] = useState<IIdName | undefined>(
+    // single select api state
+    const [selectedItemApi, setSelectedItemApi] = useState<IIdName | null>(
         fakeData[7]
     );
 
-    const addItemSingleApi = (newItem: IIdName) => {
-        setSelectedItemApi(newItem);
-    };
-
-    const removeItemSingleApi = (item: IIdName) => {
-        setSelectedItemApi(undefined);
-    };
-
-    // single select helpers
-
-    const [selectedItem, setSelectedItem] = useState<IIdName | undefined>(
+    // single select state
+    const [selectedItem, setSelectedItem] = useState<IIdName | null>(
         fakeData[3]
     );
-
-    const addItemSingle = (newItem: IIdName) => {
-        setSelectedItem(newItem);
-    };
-
-    const removeItemSingle = (item: IIdName) => {
-        setSelectedItem(undefined);
-    };
 
     return (
         <div className="px-10 flex flex-col space-y-10 mt-10">
             <ComponentLabel label="Multi-Select">
                 <MultiSelect
-                    onItemRemove={removeItem}
-                    onItemSelect={addItem}
+                    onItemRemove={(item) =>
+                        setSelectedItems((prev) => [
+                            ...prev.filter((x) => x.id !== item.id),
+                        ])
+                    }
+                    onItemSelect={(item) =>
+                        setSelectedItems((prev) => [...prev, item])
+                    }
                     selectedItems={selectedItems}
                     lookupFunction={fakeApiCall}
                     label="Select fruits"
@@ -72,8 +53,7 @@ const Home = () => {
             </ComponentLabel>
             <ComponentLabel label="Single-Select API">
                 <SingleSelect
-                    onItemRemove={removeItemSingleApi}
-                    onItemSelect={addItemSingleApi}
+                    onUpdate={(item) => setSelectedItemApi(item)}
                     selectedItem={selectedItemApi}
                     lookupFunction={fakeApiCall}
                     label="Select a fruit from our database"
@@ -83,8 +63,7 @@ const Home = () => {
             </ComponentLabel>
             <ComponentLabel label="Single-Select">
                 <SingleSelect
-                    onItemRemove={removeItemSingle}
-                    onItemSelect={addItemSingle}
+                    onUpdate={(item) => setSelectedItem(item)}
                     selectedItem={selectedItem}
                     items={fakeData}
                     label="Select a fruit"
