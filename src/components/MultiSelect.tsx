@@ -180,10 +180,12 @@ const MultiSelect = <T extends IIdName>({
                     {selectedItems.map((x) => (
                         <Pill key={x.id} item={x} onDelete={onItemRemove} />
                     ))}
-                    <div className="flex">
+                    <div className="flex space-x-2 grow">
                         <input
                             ref={inputRef}
-                            className="min-w-10 py-1 pl-1 bg-transparent border-none focus:outline-none grow"
+                            className={`basis-[${
+                                inputText.length * 4
+                            }px] py-1 grow pl-1 bg-transparent border-none focus:outline-none`}
                             type="text"
                             onChange={(e) => {
                                 setInputText(e.target.value);
@@ -193,10 +195,11 @@ const MultiSelect = <T extends IIdName>({
                             {...htmlTextInputProps}
                             onKeyDown={handleKeyDownOnInput}
                         />
-
-                        {fieldState === FieldState.Loading && (
-                            <Spinner className="h-5 w-5" />
-                        )}
+                        <div className="h-5 w-5 mt-1">
+                            {fieldState === FieldState.Loading && (
+                                <Spinner className="h-5 w-5" />
+                            )}
+                        </div>
                     </div>
                 </div>
             </LabelWrapper>

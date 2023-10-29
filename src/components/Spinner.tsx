@@ -9,7 +9,7 @@ const Spinner = ({ className }: Props) => {
             <svg
                 aria-hidden="true"
                 className={twMerge(
-                    "w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600",
+                    "w-8 h-8 text-black/10 animate-spin fill-blue-600",
                     className
                 )}
                 viewBox="0 0 100 101"

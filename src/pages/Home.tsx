@@ -27,7 +27,7 @@ const Home = () => {
 
     return (
         <div className="px-10 flex flex-col space-y-10 mt-10">
-            <ComponentLabel label="Multi-Select API">
+            <ComponentLabel label="Multi-Select Async">
                 <MultiSelect
                     onItemRemove={(item) =>
                         setMultiSelectApiItems((prev) => [
@@ -44,12 +44,12 @@ const Home = () => {
                     placeholder="Search..."
                 />
             </ComponentLabel>
-            <ComponentLabel label="Single-Select API">
+            <ComponentLabel label="Single-Select Async">
                 <SingleSelect
                     onUpdate={(item) => setSingleSelectApiItem(item)}
                     selectedItem={singleSelectApiItem}
                     lookupFunction={fakeApiCall}
-                    label="Select a fruit from our database"
+                    label="Select a fruit"
                     debounceInMilliseconds={600}
                     placeholder="Search..."
                 />
