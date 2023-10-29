@@ -6,7 +6,7 @@ import Pill from "./Pill";
 import Spinner from "./Spinner";
 
 enum FieldState {
-    None = 1,
+    Default = 1,
     Loading = 2,
     NoResultsFound = 3,
 }
@@ -39,7 +39,9 @@ const MultiSelect = <T extends IIdName>({
     const [lookupFunctionResults, setLookupFunctionResults] = useState<T[]>([]);
     const [selectedItemsInternal, setSelectedItemsInternal] =
         useState<T[]>(selectedItems);
-    const [fieldState, setFieldState] = useState<FieldState>(FieldState.None);
+    const [fieldState, setFieldState] = useState<FieldState>(
+        FieldState.Default
+    );
     const [inputText, setInputText] = useState("");
 
     const containerRef = useRef<HTMLDivElement>(null);
@@ -95,7 +97,7 @@ const MultiSelect = <T extends IIdName>({
 
     // callback to reset loading state
     const resetErrorState = () => {
-        setFieldState(FieldState.None);
+        setFieldState(FieldState.Default);
     };
 
     const handleInputChange = debounce(
@@ -117,6 +119,9 @@ const MultiSelect = <T extends IIdName>({
             if (firstChild) {
                 firstChild.focus();
             }
+        } else if (e.key === "Backspace" && inputText === "") {
+            const lastItem = selectedItems[selectedItems.length - 1];
+            onItemRemove(lastItem);
         }
     };
 
@@ -144,7 +149,7 @@ const MultiSelect = <T extends IIdName>({
             ) {
                 // close dropdown
                 setLookupFunctionResults([]);
-                setFieldState(FieldState.None);
+                setFieldState(FieldState.Default);
 
                 // if nothing was selected but text was entered clear text
                 if (
@@ -180,7 +185,11 @@ const MultiSelect = <T extends IIdName>({
                             ref={inputRef}
                             className="min-w-10 py-1 pl-1 bg-transparent border-none focus:outline-none grow"
                             type="text"
-                            onChange={handleInputChange}
+                            onChange={(e) => {
+                                setInputText(e.target.value);
+                                handleInputChange(e);
+                            }}
+                            value={inputText}
                             {...htmlTextInputProps}
                             onKeyDown={handleKeyDownOnInput}
                         />
