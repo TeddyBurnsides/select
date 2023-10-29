@@ -225,7 +225,7 @@ const SingleSelect = <T extends IIdName>({
                                 <button
                                     type="button"
                                     onClick={clearField}
-                                    className="disabled:cursor-default opacity-50 hover:opacity-100 disabled:hover:opacity-50 text-xl px-2 rounded-full hover:bg-black/10 disabled:hover:bg-transparent"
+                                    className="disabled:cursor-default opacity-50 hover:opacity-100 disabled:hover:opacity-50 text-xl px-2 rounded-full hover:bg-black/10 focus:bg-black/10 disabled:hover:bg-transparent focus:outline-none"
                                 >
                                     &times;
                                 </button>

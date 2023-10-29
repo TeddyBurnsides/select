@@ -19,7 +19,7 @@ const Pill = ({ item, onDelete, className }: Props) => {
             <button
                 onClick={() => onDelete(item)}
                 type="button"
-                className="rounded-full text-lg px-1 h-5 hover:bg-blue-500/30"
+                className="rounded-full text-lg px-1 h-5 hover:bg-blue-500/30 focus:outline-none focus:bg-blue-500/30"
             >
                 <span className="relative -top-1">&times;</span>
             </button>
