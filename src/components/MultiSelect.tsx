@@ -88,6 +88,8 @@ const MultiSelect = <T extends IIdName>({
         onItemSelect(selectedItem);
         // highlight the text in the input
         inputRef.current?.select();
+
+        setLastItemSelected(false);
     };
 
     // update internal results list with the passed in prop
@@ -110,6 +112,8 @@ const MultiSelect = <T extends IIdName>({
         debounceInMilliseconds
     );
 
+    const [lastItemSelected, setLastItemSelected] = useState<boolean>(false);
+
     const handleKeyDownOnInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             lookupResults(inputText, resetErrorState);
@@ -120,8 +124,13 @@ const MultiSelect = <T extends IIdName>({
                 firstChild.focus();
             }
         } else if (e.key === "Backspace" && inputText === "") {
-            const lastItem = selectedItems[selectedItems.length - 1];
-            onItemRemove(lastItem);
+            if (lastItemSelected) {
+                const lastItem = selectedItems[selectedItems.length - 1];
+                onItemRemove(lastItem);
+                setLastItemSelected(false);
+            } else {
+                setLastItemSelected(true);
+            }
         }
     };
 
@@ -137,6 +146,8 @@ const MultiSelect = <T extends IIdName>({
             e.currentTarget.previousSibling &&
                 (e.currentTarget.previousSibling as HTMLButtonElement).focus();
         }
+
+        setLastItemSelected(false);
     };
 
     // close dropdowns if user clicks outside select component
@@ -150,6 +161,7 @@ const MultiSelect = <T extends IIdName>({
                 // close dropdown
                 setLookupFunctionResults([]);
                 setFieldState(FieldState.Default);
+                setLastItemSelected(false);
 
                 // if nothing was selected but text was entered clear text
                 if (
@@ -177,9 +189,20 @@ const MultiSelect = <T extends IIdName>({
                 required={htmlTextInputProps.required}
             >
                 <div className="flex gap-1 flex-wrap pt-1">
-                    {selectedItems.map((x) => (
-                        <Pill key={x.id} item={x} onDelete={onItemRemove} />
-                    ))}
+                    {selectedItems.map((item, index) => {
+                        const isLastItem = index === selectedItems.length - 1;
+                        return (
+                            <Pill
+                                isFocused={isLastItem && lastItemSelected}
+                                key={item.id}
+                                item={item}
+                                onDelete={(e) => {
+                                    onItemRemove(e);
+                                    setLastItemSelected(false);
+                                }}
+                            />
+                        );
+                    })}
                     <div className="flex space-x-2 grow">
                         <input
                             ref={inputRef}
@@ -190,6 +213,7 @@ const MultiSelect = <T extends IIdName>({
                             onChange={(e) => {
                                 setInputText(e.target.value);
                                 handleInputChange(e);
+                                setLastItemSelected(false);
                             }}
                             value={inputText}
                             {...htmlTextInputProps}

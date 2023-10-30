@@ -28,12 +28,12 @@ const LabelWrapper = ({
                 <label
                     className={twMerge(
                         labelClassName,
-                        "flex text-sm opacity-70"
+                        "flex text-sm text-black/60"
                     )}
                 >
                     {label}
                     {required && (
-                        <div className="text-red-500 font-bold">*</div>
+                        <div className="text-red-500 font-semibold">*</div>
                     )}
                 </label>
             )}

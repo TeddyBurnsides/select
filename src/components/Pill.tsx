@@ -5,13 +5,16 @@ interface Props {
     item: IIdName;
     onDelete: (item: IIdName) => void;
     className?: string;
+    isFocused?: boolean;
 }
 
-const Pill = ({ item, onDelete, className }: Props) => {
+const Pill = ({ item, onDelete, className, isFocused = false }: Props) => {
     return (
         <div
             className={twMerge(
-                "flex space-x-1 items-center rounded bg-blue-500/10 text-blue-800/70 px-2 py-1",
+                `${
+                    isFocused ? "outline outline-2 outline-blue-700/40" : ""
+                } bg-blue-500/10 flex space-x-1 items-center rounded text-blue-900/90 px-2 py-1`,
                 className
             )}
         >
